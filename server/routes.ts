@@ -8,7 +8,8 @@ import {
   insertCharacterSchema, 
   insertPlotSchema, 
   insertLoreEntrySchema,
-  insertDocumentSchema 
+  insertDocumentSchema,
+  type AuditLog
 } from "@shared/schema";
 import fs from "fs";
 import path from "path";
@@ -260,6 +261,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const results = [];
+      const importBatchId = `import-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
       for (const file of files) {
         try {
@@ -285,39 +287,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
             lore: []
           };
 
-          // Create characters
+          // Create characters with import tracking
           for (const char of extracted.characters) {
-            const character = await storage.createCharacter({
+            const character = await storage.createCharacterFromImport({
               ...char,
               campaignId: req.params.campaignId
-            });
+            }, importBatchId, file.originalname);
             createdItems.characters.push(character);
           }
 
-          // Create events
+          // Create events with import tracking
           for (const event of extracted.events) {
-            const timelineEvent = await storage.createTimelineEvent({
+            const timelineEvent = await storage.createTimelineEventFromImport({
               ...event,
               campaignId: req.params.campaignId
-            });
+            }, importBatchId, file.originalname);
             createdItems.events.push(timelineEvent);
           }
 
-          // Create plots
+          // Create plots with import tracking
           for (const plot of extracted.plots) {
-            const plotEntry = await storage.createPlot({
+            const plotEntry = await storage.createPlotFromImport({
               ...plot,
               campaignId: req.params.campaignId
-            });
+            }, importBatchId, file.originalname);
             createdItems.plots.push(plotEntry);
           }
 
-          // Create lore
+          // Create lore with import tracking
           for (const lore of extracted.lore) {
-            const loreEntry = await storage.createLoreEntry({
+            const loreEntry = await storage.createLoreEntryFromImport({
               ...lore,
               campaignId: req.params.campaignId
-            });
+            }, importBatchId, file.originalname);
             createdItems.lore.push(loreEntry);
           }
 
@@ -327,6 +329,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           results.push({
             filename: file.originalname,
             documentId: document.id,
+            importBatchId: importBatchId,
             extracted: createdItems
           });
 
@@ -378,6 +381,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("AI suggestions error:", error);
       res.status(500).json({ error: "Failed to generate AI suggestions" });
+    }
+  });
+
+  // Audit Log Routes
+  app.get("/api/campaigns/:campaignId/audit-log", async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 100;
+      const auditLog = await storage.getAuditLog(req.params.campaignId, limit);
+      res.json(auditLog);
+    } catch (error) {
+      console.error("Audit log retrieval error:", error);
+      res.status(500).json({ error: "Failed to retrieve audit log" });
+    }
+  });
+
+  app.get("/api/audit-log/entity/:entityId", async (req, res) => {
+    try {
+      const auditLog = await storage.getAuditLogForEntity(req.params.entityId);
+      res.json(auditLog);
+    } catch (error) {
+      console.error("Entity audit log retrieval error:", error);
+      res.status(500).json({ error: "Failed to retrieve entity audit log" });
+    }
+  });
+
+  app.get("/api/audit-log/import/:importBatchId", async (req, res) => {
+    try {
+      const auditLog = await storage.getAuditLogForImportBatch(req.params.importBatchId);
+      res.json(auditLog);
+    } catch (error) {
+      console.error("Import batch audit log retrieval error:", error);
+      res.status(500).json({ error: "Failed to retrieve import batch audit log" });
+    }
+  });
+
+  // Rollback Routes
+  app.post("/api/rollback/import/:importBatchId", async (req, res) => {
+    try {
+      const result = await storage.rollbackImportBatch(req.params.importBatchId);
+      if (result.success) {
+        res.json({
+          message: "Rollback completed successfully",
+          restoredCount: result.restoredCount,
+          deletedCount: result.deletedCount
+        });
+      } else {
+        res.status(500).json({ error: "Rollback failed" });
+      }
+    } catch (error) {
+      console.error("Import rollback error:", error);
+      res.status(500).json({ error: "Failed to rollback import" });
+    }
+  });
+
+  app.post("/api/rollback/timestamp/:campaignId", async (req, res) => {
+    try {
+      const timestamp = new Date(req.body.timestamp);
+      if (isNaN(timestamp.getTime())) {
+        return res.status(400).json({ error: "Invalid timestamp format" });
+      }
+      
+      const result = await storage.rollbackToTimestamp(req.params.campaignId, timestamp);
+      if (result.success) {
+        res.json({
+          message: "Rollback completed successfully",
+          changesReverted: result.changesReverted
+        });
+      } else {
+        res.status(500).json({ error: "Rollback failed" });
+      }
+    } catch (error) {
+      console.error("Timestamp rollback error:", error);
+      res.status(500).json({ error: "Failed to rollback to timestamp" });
     }
   });
 

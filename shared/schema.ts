@@ -68,6 +68,20 @@ export const documents = pgTable("documents", {
   processed: boolean("processed").default(false),
 });
 
+export const auditLog = pgTable("audit_log", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  campaignId: varchar("campaign_id").notNull(),
+  entityType: text("entity_type").notNull(), // 'character', 'event', 'plot', 'lore', 'document'
+  entityId: varchar("entity_id").notNull(),
+  action: text("action").notNull(), // 'create', 'update', 'delete'
+  oldData: text("old_data"), // JSON string of previous state
+  newData: text("new_data"), // JSON string of new state
+  source: text("source").notNull(), // 'manual', 'import', 'ai-processing'
+  importBatchId: varchar("import_batch_id"), // Groups changes from same import
+  timestamp: timestamp("timestamp").defaultNow(),
+  metadata: text("metadata"), // Additional context (filename, user action, etc.)
+});
+
 // Insert schemas
 export const insertCampaignSchema = createInsertSchema(campaigns).pick({
   name: true,
@@ -123,6 +137,18 @@ export const insertDocumentSchema = createInsertSchema(documents).pick({
   content: true,
 });
 
+export const insertAuditLogSchema = createInsertSchema(auditLog).pick({
+  campaignId: true,
+  entityType: true,
+  entityId: true,
+  action: true,
+  oldData: true,
+  newData: true,
+  source: true,
+  importBatchId: true,
+  metadata: true,
+});
+
 // Types
 export type InsertCampaign = z.infer<typeof insertCampaignSchema>;
 export type Campaign = typeof campaigns.$inferSelect;
@@ -141,3 +167,6 @@ export type LoreEntry = typeof loreEntries.$inferSelect;
 
 export type InsertDocument = z.infer<typeof insertDocumentSchema>;
 export type Document = typeof documents.$inferSelect;
+
+export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;
+export type AuditLog = typeof auditLog.$inferSelect;

@@ -8,6 +8,7 @@ import Timeline from "@/pages/timeline";
 import Characters from "@/pages/characters";
 import Plots from "@/pages/plots";
 import Lore from "@/pages/lore";
+import AuditLog from "@/pages/audit-log";
 import Sidebar from "@/components/layout/sidebar";
 import RightSidebar from "@/components/layout/right-sidebar";
 import UploadModal from "@/components/modals/upload-modal";
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/characters" component={Characters} />
       <Route path="/plots" component={Plots} />
       <Route path="/lore" component={Lore} />
+      <Route path="/audit-log" component={AuditLog} />
       <Route component={NotFound} />
     </Switch>
   );

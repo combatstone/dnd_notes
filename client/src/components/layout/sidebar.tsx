@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Clock, Users, Scroll, Globe, Upload, Search, Sparkles } from "lucide-react";
+import { Clock, Users, Scroll, Globe, Upload, Search, Sparkles, History } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import type { Campaign } from "@shared/schema";
 
@@ -22,6 +22,7 @@ export default function Sidebar({ onOpenUpload }: SidebarProps) {
     { href: "/characters", label: "Characters & NPCs", icon: Users },
     { href: "/plots", label: "Plot Summary", icon: Scroll },
     { href: "/lore", label: "World Lore", icon: Globe },
+    { href: "/audit-log", label: "Audit Trail", icon: History },
   ];
 
   const toolItems = [
