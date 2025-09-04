@@ -1,0 +1,77 @@
+Error 1:
+[{
+	"resource": "/c:/Users/sklau/Documents/DungeonScribe/client/src/api/timeline.ts",
+	"owner": "typescript",
+	"code": "2724",
+	"severity": 8,
+	"message": "'\"../../../shared/schema\"' has no exported member named 'timelineEventSchema'. Did you mean 'timelineEvents'?",
+	"source": "ts",
+	"startLineNumber": 3,
+	"startColumn": 3,
+	"endLineNumber": 3,
+	"endColumn": 22,
+	"relatedInformation": [
+		{
+			"startLineNumber": 15,
+			"startColumn": 14,
+			"endLineNumber": 15,
+			"endColumn": 28,
+			"message": "'timelineEvents' is declared here.",
+			"resource": "/c:/Users/sklau/Documents/DungeonScribe/shared/schema.ts"
+		}
+	],
+	"origin": "extHost1"
+}]
+
+Error 2:
+[{
+	"resource": "/c:/Users/sklau/Documents/DungeonScribe/client/src/components/timeline/timeline.ts",
+	"owner": "typescript",
+	"code": "2344",
+	"severity": 8,
+	"message": "Type 'PgTableWithColumns<{ name: \"timeline_events\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"timeline_events\"; dataType: \"string\"; columnType: \"PgVarchar\"; data: string; driverParam: string; notNull: true; ... 7 more ...; generated: undefined; }, {}, { ...; }>; ... 8 more ...; linkedLocations: ...' does not satisfy the constraint 'ZodType<any, any, any>'.\n  Type 'PgTable<{ name: \"timeline_events\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"timeline_events\"; dataType: \"string\"; columnType: \"PgVarchar\"; data: string; driverParam: string; notNull: true; ... 7 more ...; generated: undefined; }, {}, { ...; }>; ... 8 more ...; linkedLocations: PgColumn<.....' is missing the following properties from type 'ZodType<any, any, any>': _type, _output, _input, _def, and 33 more.",
+	"source": "ts",
+	"startLineNumber": 5,
+	"startColumn": 37,
+	"endLineNumber": 5,
+	"endColumn": 58,
+	"origin": "extHost1"
+}]
+
+Error 3:
+
+[{
+	"resource": "/c:/Users/sklau/Documents/DungeonScribe/client/src/pages/timeline.tsx",
+	"owner": "typescript",
+	"code": "2724",
+	"severity": 8,
+	"message": "'\"../../../shared/schema\"' has no exported member named 'timelineEventSchema'. Did you mean 'timelineEvents'?",
+	"source": "ts",
+	"startLineNumber": 14,
+	"startColumn": 10,
+	"endLineNumber": 14,
+	"endColumn": 29,
+	"relatedInformation": [
+		{
+			"startLineNumber": 15,
+			"startColumn": 14,
+			"endLineNumber": 15,
+			"endColumn": 28,
+			"message": "'timelineEvents' is declared here.",
+			"resource": "/c:/Users/sklau/Documents/DungeonScribe/shared/schema.ts"
+		}
+	],
+	"origin": "extHost1"
+},{
+	"resource": "/c:/Users/sklau/Documents/DungeonScribe/client/src/pages/timeline.tsx",
+	"owner": "typescript",
+	"code": "2739",
+	"severity": 8,
+	"message": "Type '{ key: any; event: any; }' is missing the following properties from type 'TimelineEventProps': characters, plots",
+	"source": "ts",
+	"startLineNumber": 54,
+	"startColumn": 16,
+	"endLineNumber": 54,
+	"endColumn": 38,
+	"origin": "extHost1"
+}]

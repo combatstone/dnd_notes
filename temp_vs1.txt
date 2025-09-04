@@ -1,0 +1,87 @@
+Error 1:
+[{
+	"resource": "/c:/Users/sklau/Documents/DungeonScribe/client/src/api/timeline.ts",
+	"owner": "typescript",
+	"code": "2724",
+	"severity": 8,
+	"message": "'\"../../../shared/schema\"' has no exported member named 'timelineEventSchema'. Did you mean 'timelineEvents'?",
+	"source": "ts",
+	"startLineNumber": 3,
+	"startColumn": 3,
+	"endLineNumber": 3,
+	"endColumn": 22,
+	"relatedInformation": [
+		{
+			"startLineNumber": 15,
+			"startColumn": 14,
+			"endLineNumber": 15,
+			"endColumn": 28,
+			"message": "'timelineEvents' is declared here.",
+			"resource": "/c:/Users/sklau/Documents/DungeonScribe/shared/schema.ts"
+		}
+	],
+	"origin": "extHost1"
+}]
+
+Error 2:
+[{
+	"resource": "/c:/Users/sklau/Documents/DungeonScribe/client/src/components/timeline/timeline.ts",
+	"owner": "typescript",
+	"code": "2724",
+	"severity": 8,
+	"message": "'\"../../../../shared/schema\"' has no exported member named 'timelineEventSchema'. Did you mean 'timelineEvents'?",
+	"source": "ts",
+	"startLineNumber": 2,
+	"startColumn": 10,
+	"endLineNumber": 2,
+	"endColumn": 29,
+	"relatedInformation": [
+		{
+			"startLineNumber": 15,
+			"startColumn": 14,
+			"endLineNumber": 15,
+			"endColumn": 28,
+			"message": "'timelineEvents' is declared here.",
+			"resource": "/c:/Users/sklau/Documents/DungeonScribe/shared/schema.ts"
+		}
+	],
+	"origin": "extHost1"
+}]
+
+Error 3:
+
+[{
+	"resource": "/c:/Users/sklau/Documents/DungeonScribe/client/src/pages/timeline.tsx",
+	"owner": "typescript",
+	"code": "2614",
+	"severity": 8,
+	"message": "Module '\"@/components/timeline/timeline-event\"' has no exported member 'TimelineEvent'. Did you mean to use 'import TimelineEvent from \"@/components/timeline/timeline-event\"' instead?",
+	"source": "ts",
+	"startLineNumber": 10,
+	"startColumn": 10,
+	"endLineNumber": 10,
+	"endColumn": 23,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/Users/sklau/Documents/DungeonScribe/client/src/pages/timeline.tsx",
+	"owner": "typescript",
+	"code": "2724",
+	"severity": 8,
+	"message": "'\"../../../shared/schema\"' has no exported member named 'timelineEventSchema'. Did you mean 'timelineEvents'?",
+	"source": "ts",
+	"startLineNumber": 13,
+	"startColumn": 10,
+	"endLineNumber": 13,
+	"endColumn": 29,
+	"relatedInformation": [
+		{
+			"startLineNumber": 15,
+			"startColumn": 14,
+			"endLineNumber": 15,
+			"endColumn": 28,
+			"message": "'timelineEvents' is declared here.",
+			"resource": "/c:/Users/sklau/Documents/DungeonScribe/shared/schema.ts"
+		}
+	],
+	"origin": "extHost1"
+}]

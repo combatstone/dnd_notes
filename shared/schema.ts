@@ -1,7 +1,15 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp, boolean } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
+import {
+  pgTable,
+  text,
+  varchar,
+  timestamp,
+  boolean,
+} from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// -- TABLES --
 
 export const campaigns = pgTable("campaigns", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -19,7 +27,7 @@ export const timelineEvents = pgTable("timeline_events", {
   description: text("description"),
   gameDate: text("game_date"),
   realDate: timestamp("real_date").defaultNow(),
-  eventType: text("event_type").notNull(), // combat, roleplay, discovery, etc.
+  eventType: text("event_type").notNull(),
   linkedCharacters: text("linked_characters").array().default([]),
   linkedPlots: text("linked_plots").array().default([]),
   linkedLocations: text("linked_locations").array().default([]),
@@ -29,22 +37,18 @@ export const characters = pgTable("characters", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   campaignId: varchar("campaign_id").notNull(),
   name: text("name").notNull(),
-  race: text("race"),
-  characterClass: text("character_class"),
-  alignment: text("alignment"),
-  isNPC: boolean("is_npc").default(false),
-  biography: text("biography"),
-  notes: text("notes"),
-  appearanceCount: text("appearance_count").default("0"),
+  bio: text("bio"),
+  isPlayerCharacter: boolean("is_player_character").default(false),
+  linkedEvents: text("linked_events").array().default([]),
+  linkedPlots: text("linked_plots").array().default([]),
 });
 
 export const plots = pgTable("plots", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   campaignId: varchar("campaign_id").notNull(),
-  title: text("title").notNull(),
+  name: text("name").notNull(),
   description: text("description"),
-  status: text("status").notNull().default("active"), // active, completed, on-hold
-  plotType: text("plot_type").notNull().default("main"), // main, subplot, side-quest
+  plotType: text("plot_type"), // Main plot, side quest, etc.
   linkedCharacters: text("linked_characters").array().default([]),
   linkedEvents: text("linked_events").array().default([]),
 });
@@ -54,8 +58,8 @@ export const loreEntries = pgTable("lore_entries", {
   campaignId: varchar("campaign_id").notNull(),
   title: text("title").notNull(),
   content: text("content"),
-  category: text("category").notNull(), // location, history, religion, culture, etc.
-  isSecret: boolean("is_secret").default(false), // DM-only vs player-accessible
+  category: text("category"), // People, places, history, etc.
+  isSecret: boolean("is_secret").default(false),
   tags: text("tags").array().default([]),
 });
 
@@ -64,59 +68,71 @@ export const documents = pgTable("documents", {
   campaignId: varchar("campaign_id").notNull(),
   filename: text("filename").notNull(),
   content: text("content"),
-  uploadDate: timestamp("upload_date").defaultNow(),
-  processed: boolean("processed").default(false),
 });
 
 export const auditLog = pgTable("audit_log", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   campaignId: varchar("campaign_id").notNull(),
-  entityType: text("entity_type").notNull(), // 'character', 'event', 'plot', 'lore', 'document'
-  entityId: varchar("entity_id").notNull(),
-  action: text("action").notNull(), // 'create', 'update', 'delete'
-  oldData: text("old_data"), // JSON string of previous state
-  newData: text("new_data"), // JSON string of new state
-  source: text("source").notNull(), // 'manual', 'import', 'ai-processing'
-  importBatchId: varchar("import_batch_id"), // Groups changes from same import
   timestamp: timestamp("timestamp").defaultNow(),
-  metadata: text("metadata"), // Additional context (filename, user action, etc.)
+  entityType: text("entity_type"), // e.g., 'character', 'plot'
+  entityId: text("entity_id"),
+  action: text("action"), // e.g., 'create', 'update', 'delete'
+  oldData: text("old_data"),
+  newData: text("new_data"),
+  source: text("source"), // e.g., 'manual', 'document_import'
+  importBatchId: text("import_batch_id"),
+  metadata: text("metadata"),
 });
 
-// Insert schemas
+// -- ZOD SCHEMAS --
+
+// Select Schemas (for reading from DB)
+export const campaignSchema = createSelectSchema(campaigns);
+export const timelineEventSchema = createSelectSchema(timelineEvents, {
+  // Coerce the date string from the API back into a Date object
+  realDate: z.coerce.date(),
+});
+export const characterSchema = createSelectSchema(characters);
+export const plotSchema = createSelectSchema(plots);
+export const loreEntrySchema = createSelectSchema(loreEntries);
+export const documentSchema = createSelectSchema(documents);
+export const auditLogSchema = createSelectSchema(auditLog, {
+  timestamp: z.coerce.date(),
+});
+
+// Insert Schemas (for writing to DB)
 export const insertCampaignSchema = createInsertSchema(campaigns).pick({
   name: true,
   description: true,
-  currentSession: true,
-  partyLevel: true,
 });
 
-export const insertTimelineEventSchema = createInsertSchema(timelineEvents).pick({
-  campaignId: true,
-  title: true,
-  description: true,
-  gameDate: true,
-  eventType: true,
-  linkedCharacters: true,
-  linkedPlots: true,
-  linkedLocations: true,
-});
+export const insertTimelineEventSchema = createInsertSchema(timelineEvents).pick(
+  {
+    campaignId: true,
+    title: true,
+    description: true,
+
+    gameDate: true,
+    eventType: true,
+    linkedCharacters: true,
+    linkedPlots: true,
+    linkedLocations: true,
+  }
+);
 
 export const insertCharacterSchema = createInsertSchema(characters).pick({
   campaignId: true,
   name: true,
-  race: true,
-  characterClass: true,
-  alignment: true,
-  isNPC: true,
-  biography: true,
-  notes: true,
+  bio: true,
+  isPlayerCharacter: true,
+  linkedEvents: true,
+  linkedPlots: true,
 });
 
 export const insertPlotSchema = createInsertSchema(plots).pick({
   campaignId: true,
-  title: true,
+  name: true,
   description: true,
-  status: true,
   plotType: true,
   linkedCharacters: true,
   linkedEvents: true,
@@ -149,7 +165,8 @@ export const insertAuditLogSchema = createInsertSchema(auditLog).pick({
   metadata: true,
 });
 
-// Types
+// -- TYPES --
+
 export type InsertCampaign = z.infer<typeof insertCampaignSchema>;
 export type Campaign = typeof campaigns.$inferSelect;
 

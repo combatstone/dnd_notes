@@ -1,18 +1,17 @@
-// client/src/components/timeline/add-timeline-event-form.tsx
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,83 +19,162 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { type InsertTimelineEvent } from "@shared/schema";
+} from "../ui/select";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createTimelineEvent } from "@/api/timeline";
+import { insertTimelineEventSchema } from "../../../../shared/schema";
+import { useState } from "react";
 
-const formSchema = z.object({
-  title: z.string().min(2, { message: "Title must be at least 2 characters." }),
-  description: z.string().optional(),
-  gameDate: z.string().optional(),
-  eventType: z.string({ required_error: "Please select an event type." }),
+const formSchema = insertTimelineEventSchema.pick({
+  eventType: true,
+  gameDate: true,
+  title: true,
+  description: true,
 });
 
-interface AddTimelineEventFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: Omit<InsertTimelineEvent, 'campaignId' | 'realDate'>) => void;
-  isSubmitting: boolean;
-}
+export function AddTimelineEventForm() {
+  const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-export default function AddTimelineEventForm({ isOpen, onClose, onSubmit, isSubmitting }: AddTimelineEventFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      eventType: "Event",
+      gameDate: "",
       title: "",
       description: "",
-      gameDate: "",
-      eventType: "manual",
     },
   });
 
-  const handleFormSubmit = (values: z.infer<typeof formSchema>) => {
-    onSubmit(values);
-  };
+  const mutation = useMutation({
+    mutationFn: createTimelineEvent,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      toast({
+        title: "Timeline event created.",
+        description: "The new timeline event has been successfully created.",
+      });
+      setIsOpen(false); // Close the dialog on success
+      form.reset(); // Reset the form for the next use
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    const submissionData = {
+      ...values,
+      campaignId: "1", // TODO: Replace with dynamic campaign ID
+    };
+    mutation.mutate(submissionData);
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose} modal={false}>
-      <DialogContent>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button>Add Event</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add a New Timeline Event</DialogTitle>
+          <DialogTitle>Add Timeline Event</DialogTitle>
+          <DialogDescription>
+            Add a new event to the timeline.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
-            <FormField control={form.control} name="title" render={({ field }) => ( <FormItem> <FormLabel>Title</FormLabel> <FormControl> <Input placeholder="Ambush on the Triboar Trail" {...field} /> </FormControl> <FormMessage /> </FormItem> )} />
-            <FormField control={form.control} name="description" render={({ field }) => ( <FormItem> <FormLabel>Description</FormLabel> <FormControl> <Textarea placeholder="The party is ambushed by goblins..." {...field} /> </FormControl> <FormMessage /> </FormItem> )} />
-            <div className="grid grid-cols-2 gap-4">
-              <FormField control={form.control} name="gameDate" render={({ field }) => ( <FormItem> <FormLabel>In-Game Date</FormLabel> <FormControl> <Input placeholder="e.g., Mirtul 1, 1491 DR" {...field} /> </FormControl> <FormMessage /> </FormItem> )} />
-              <FormField
-                control={form.control}
-                name="eventType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Event Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select an event type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="manual">Manual</SelectItem>
-                        <SelectItem value="session_start">Session Start</SelectItem>
-                        <SelectItem value="encounter">Encounter</SelectItem>
-                        <SelectItem value="discovery">Discovery</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="eventType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value ?? ""}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an event type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Event">Event</SelectItem>
+                      <SelectItem value="Birth">Birth</SelectItem>
+                      <SelectItem value="Death">Death</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="gameDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="YYYY-MM-DD"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    The date of the event.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="The great battle"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="A description of the event"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <DialogFooter>
-              <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
-              <Button type="submit" disabled={isSubmitting}> {isSubmitting ? "Adding..." : "Add Event"} </Button>
+              <Button type="submit" disabled={mutation.isPending}>
+                {mutation.isPending ? "Saving..." : "Save changes"}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

@@ -1,0 +1,3 @@
+client:495 [vite] connecting...
+client:618 [vite] connected.
+timeline.tsx:9 Uncaught SyntaxError: The requested module '/src/components/timeline/add-timeline-event-form.tsx?t=1756988432495' does not provide an export named 'default' (at timeline.tsx:9:8)
