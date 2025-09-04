@@ -1,137 +1,139 @@
-import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Filter, Users, UserCheck, UserX } from "lucide-react";
+// client/src/pages/characters.tsx
+import { useState } from "react";
 import CharacterCard from "@/components/character/character-card";
-import type { Character } from "@shared/schema";
+import AddCharacterForm from "@/components/character/add-character-form";
+import EditCharacterForm from "@/components/character/edit-character-form";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getCharacters, createCharacter, deleteCharacter, updateCharacter } from "@/api/characters";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
+import { type Character, type InsertCharacter } from "@shared/schema";
 
 export default function Characters() {
-  const { data: characters, isLoading } = useQuery<Character[]>({
-    queryKey: ["/api/campaigns/default-campaign/characters"],
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+
+  const campaignId = "campaign-1";
+
+  const { data: characters, isLoading, isError } = useQuery({
+    queryKey: ["characters", campaignId],
+    queryFn: () => getCharacters(campaignId),
   });
 
-  const playerCharacters = characters?.filter(char => !char.isNPC) || [];
-  const npcs = characters?.filter(char => char.isNPC) || [];
+  const createMutation = useMutation({
+    mutationFn: createCharacter,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["characters", campaignId] });
+      toast({ title: "Success", description: "Character added." });
+      setIsAddModalOpen(false);
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to add character.", variant: "destructive" });
+    },
+  });
 
-  if (isLoading) {
+  const deleteMutation = useMutation({
+    mutationFn: deleteCharacter,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["characters", campaignId] });
+      toast({ title: "Success", description: "Character deleted." });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to delete character.", variant: "destructive" });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string, data: Partial<InsertCharacter> }) => updateCharacter(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["characters", campaignId] });
+      toast({ title: "Success", description: "Character updated." });
+      setIsEditModalOpen(false);
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to update character.", variant: "destructive" });
+    },
+  });
+
+  const handleAddFormSubmit = (data: Omit<InsertCharacter, 'campaignId'>) => {
+    createMutation.mutate({ ...data, campaignId });
+  };
+  
+  const handleDeleteCharacter = (id: string) => {
+    deleteMutation.mutate(id);
+  };
+  
+  const handleEditCharacter = (character: Character) => {
+    setSelectedCharacter(character);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditFormSubmit = (data: Partial<InsertCharacter>) => {
+    if (selectedCharacter) {
+      updateMutation.mutate({ id: selectedCharacter.id, data });
+    }
+  };
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-48 w-full" />
+          ))}
+        </div>
+      );
+    }
+  
+    if (isError) {
+      return <div className="p-4 text-red-500">Error fetching characters.</div>;
+    }
+  
+    if (!characters || characters.length === 0) {
+      return <div className="p-4 text-center text-gray-500">No characters found for this campaign yet.</div>;
+    }
+  
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-muted-foreground">Loading characters...</div>
+      <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {characters.map((character) => (
+          <CharacterCard 
+            key={character.id} 
+            character={character} 
+            onDelete={handleDeleteCharacter}
+            onEdit={handleEditCharacter}
+          />
+        ))}
       </div>
     );
-  }
+  };
 
   return (
-    <>
-      {/* Top Bar */}
-      <header className="bg-card border-b border-border px-6 py-4" data-testid="characters-header">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground">Characters & NPCs</h2>
-            <p className="text-sm text-muted-foreground">Manage player characters and non-player characters</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button className="flex items-center gap-2" data-testid="add-character-button">
-              <Plus className="h-4 w-4" />
-              Add Character
-            </Button>
-            <Button variant="secondary" className="flex items-center gap-2" data-testid="filter-characters">
-              <Filter className="h-4 w-4" />
-              Filter
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      {/* Characters Content */}
-      <div className="flex-1 overflow-auto">
-        <div className="p-6">
-          {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <Card data-testid="stat-total-characters">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
-                    <Users className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold">{characters?.length || 0}</p>
-                    <p className="text-sm text-muted-foreground">Total Characters</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card data-testid="stat-player-characters">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-accent/10 text-accent rounded-lg flex items-center justify-center">
-                    <UserCheck className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold">{playerCharacters.length}</p>
-                    <p className="text-sm text-muted-foreground">Player Characters</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card data-testid="stat-npcs">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-secondary/10 text-secondary-foreground rounded-lg flex items-center justify-center">
-                    <UserX className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold">{npcs.length}</p>
-                    <p className="text-sm text-muted-foreground">NPCs</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Player Characters Section */}
-          <div className="mb-8">
-            <h3 className="text-xl font-semibold text-foreground mb-4">Player Characters</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {playerCharacters.length > 0 ? (
-                playerCharacters.map((character) => (
-                  <CharacterCard key={character.id} character={character} />
-                ))
-              ) : (
-                <Card className="col-span-full">
-                  <CardContent className="p-6 text-center">
-                    <UserCheck className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
-                    <p className="text-lg font-medium mb-2 text-muted-foreground">No player characters yet</p>
-                    <p className="text-sm text-muted-foreground">Add player characters to track their progress and details.</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </div>
-
-          {/* NPCs Section */}
-          <div>
-            <h3 className="text-xl font-semibold text-foreground mb-4">Non-Player Characters</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {npcs.length > 0 ? (
-                npcs.map((character) => (
-                  <CharacterCard key={character.id} character={character} />
-                ))
-              ) : (
-                <Card className="col-span-full">
-                  <CardContent className="p-6 text-center">
-                    <UserX className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
-                    <p className="text-lg font-medium mb-2 text-muted-foreground">No NPCs yet</p>
-                    <p className="text-sm text-muted-foreground">Add NPCs to track important characters in your campaign.</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </div>
-        </div>
+    <div>
+      <div className="flex justify-between items-center p-4 border-b">
+        <h1 className="text-2xl font-bold">Characters</h1>
+        <Button onClick={() => setIsAddModalOpen(true)}>Add Character</Button>
       </div>
-    </>
+      
+      {renderContent()}
+
+      <AddCharacterForm 
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSubmit={handleAddFormSubmit}
+        isSubmitting={createMutation.isPending}
+      />
+
+      <EditCharacterForm
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSubmit={handleEditFormSubmit}
+        isSubmitting={updateMutation.isPending}
+        character={selectedCharacter}
+      />
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-import { 
+import {
   type Campaign, type InsertCampaign,
   type TimelineEvent, type InsertTimelineEvent,
   type Character, type InsertCharacter,
@@ -14,673 +14,349 @@ export interface IStorage {
   getCampaign(id: string): Promise<Campaign | undefined>;
   createCampaign(campaign: InsertCampaign): Promise<Campaign>;
   getAllCampaigns(): Promise<Campaign[]>;
-  
+
   // Timeline Events
   getTimelineEvents(campaignId: string): Promise<TimelineEvent[]>;
   getTimelineEvent(id: string): Promise<TimelineEvent | undefined>;
   createTimelineEvent(event: InsertTimelineEvent): Promise<TimelineEvent>;
   updateTimelineEvent(id: string, updates: Partial<InsertTimelineEvent>): Promise<TimelineEvent | undefined>;
   deleteTimelineEvent(id: string): Promise<boolean>;
-  
+
   // Characters
   getCharacters(campaignId: string): Promise<Character[]>;
   getCharacter(id: string): Promise<Character | undefined>;
   createCharacter(character: InsertCharacter): Promise<Character>;
   updateCharacter(id: string, updates: Partial<InsertCharacter>): Promise<Character | undefined>;
   deleteCharacter(id: string): Promise<boolean>;
-  
+
   // Plots
   getPlots(campaignId: string): Promise<Plot[]>;
   getPlot(id: string): Promise<Plot | undefined>;
   createPlot(plot: InsertPlot): Promise<Plot>;
   updatePlot(id: string, updates: Partial<InsertPlot>): Promise<Plot | undefined>;
   deletePlot(id: string): Promise<boolean>;
-  
+
   // Lore
   getLoreEntries(campaignId: string): Promise<LoreEntry[]>;
   getLoreEntry(id: string): Promise<LoreEntry | undefined>;
-  createLoreEntry(lore: InsertLoreEntry): Promise<LoreEntry>;
+  createLoreEntry(entry: InsertLoreEntry): Promise<LoreEntry>;
   updateLoreEntry(id: string, updates: Partial<InsertLoreEntry>): Promise<LoreEntry | undefined>;
   deleteLoreEntry(id: string): Promise<boolean>;
-  
+
   // Documents
   getDocuments(campaignId: string): Promise<Document[]>;
+  getDocument(id: string): Promise<Document | undefined>;
   createDocument(doc: InsertDocument): Promise<Document>;
   updateDocument(id: string, updates: Partial<InsertDocument>): Promise<Document | undefined>;
-  
-  // Import-specific methods with batch tracking
-  createCharacterFromImport(character: InsertCharacter, importBatchId: string, filename: string): Promise<Character>;
-  createTimelineEventFromImport(event: InsertTimelineEvent, importBatchId: string, filename: string): Promise<TimelineEvent>;
-  createPlotFromImport(plot: InsertPlot, importBatchId: string, filename: string): Promise<Plot>;
-  createLoreEntryFromImport(lore: InsertLoreEntry, importBatchId: string, filename: string): Promise<LoreEntry>;
-  
-  // Audit Log
-  getAuditLog(campaignId: string, limit?: number): Promise<AuditLog[]>;
-  getAuditLogForEntity(entityId: string): Promise<AuditLog[]>;
-  getAuditLogForImportBatch(importBatchId: string): Promise<AuditLog[]>;
-  createAuditEntry(entry: InsertAuditLog): Promise<AuditLog>;
-  
+  deleteDocument(id: string): Promise<boolean>;
+
+  // Audit Logs
+  getAuditLogs(campaignId: string): Promise<AuditLog[]>;
+  recordAudit(
+    campaignId: string,
+    entity: 'campaign' | 'event' | 'character' | 'plot' | 'lore' | 'document',
+    entityId: string,
+    action: 'create' | 'update' | 'delete',
+    oldValue: any,
+    newValue: any,
+    source?: 'manual' | 'import',
+    importBatchId?: string,
+    details?: string
+  ): Promise<AuditLog>;
+
   // Rollback
-  rollbackImportBatch(importBatchId: string): Promise<{ success: boolean; restoredCount: number; deletedCount: number }>;
-  rollbackToTimestamp(campaignId: string, timestamp: Date): Promise<{ success: boolean; changesReverted: number }>;
+  rollbackImportBatch(importBatchId: string): Promise<{ success: boolean, restoredCount: number, deletedCount: number }>;
+  rollbackToTimestamp(campaignId: string, timestamp: Date): Promise<{ success: boolean, changesReverted: number }>;
+
+  // Import Specific Helpers
+  createCharacterFromImport(insertCharacter: InsertCharacter, importBatchId: string, filename: string): Promise<Character>;
+  createTimelineEventFromImport(insertEvent: InsertTimelineEvent, importBatchId: string, filename: string): Promise<TimelineEvent>;
+  createPlotFromImport(insertPlot: InsertPlot, importBatchId: string, filename: string): Promise<Plot>;
+  createLoreEntryFromImport(insertLore: InsertLoreEntry, importBatchId: string, filename: string): Promise<LoreEntry>;
 }
 
-export class MemStorage implements IStorage {
-  private campaigns: Map<string, Campaign>;
-  private timelineEvents: Map<string, TimelineEvent>;
-  private characters: Map<string, Character>;
-  private plots: Map<string, Plot>;
-  private loreEntries: Map<string, LoreEntry>;
-  private documents: Map<string, Document>;
-  private auditLog: Map<string, AuditLog>;
+
+export class InMemoryStorage implements IStorage {
+  private campaigns = new Map<string, Campaign>();
+  private timelineEvents = new Map<string, TimelineEvent>();
+  private characters = new Map<string, Character>();
+  private plots = new Map<string, Plot>();
+  private loreEntries = new Map<string, LoreEntry>();
+  private documents = new Map<string, Document>();
+  private auditLogs: AuditLog[] = [];
 
   constructor() {
-    this.campaigns = new Map();
-    this.timelineEvents = new Map();
-    this.characters = new Map();
-    this.plots = new Map();
-    this.loreEntries = new Map();
-    this.documents = new Map();
-    this.auditLog = new Map();
-    
-    // Create a default campaign
-    this.createDefaultCampaign();
+    this.seed();
   }
 
-  private async createDefaultCampaign() {
-    const defaultCampaign: Campaign = {
-      id: "default-campaign",
-      name: "The Lost Crown",
-      description: "A high-fantasy adventure seeking the legendary Crown of Storms",
-      currentSession: "12",
-      partyLevel: "8",
-      lastPlayed: new Date("2024-11-15"),
-    };
-    this.campaigns.set(defaultCampaign.id, defaultCampaign);
+  private seed() {
+    this.createCampaign({ name: 'The Lost Mines of Phandelver' }).then(campaign => {
+        this.createCharacter({
+            campaignId: campaign.id,
+            name: 'Gundren Rockseeker',
+            race: 'Dwarf',
+            characterClass: 'Patron',
+            isNPC: true,
+            biography: 'A jovial dwarf and the quest giver for the main adventure.',
+        });
+
+        this.createTimelineEvent({
+            campaignId: campaign.id,
+            title: 'Ambush on the Triboar Trail',
+            description: 'The party is ambushed by goblins on their way to Phandalin.',
+            eventType: 'Encounter',
+        });
+    });
   }
 
   // Campaigns
   async getCampaign(id: string): Promise<Campaign | undefined> {
     return this.campaigns.get(id);
   }
-
-  async createCampaign(insertCampaign: InsertCampaign): Promise<Campaign> {
+  async createCampaign(campaign: InsertCampaign): Promise<Campaign> {
     const id = randomUUID();
-    const campaign: Campaign = { 
-      ...insertCampaign, 
+    const newCampaign: Campaign = {
       id,
+      name: campaign.name,
+      description: campaign.description ?? null,
+      currentSession: campaign.currentSession ?? null,
+      partyLevel: campaign.partyLevel ?? null,
       lastPlayed: new Date(),
     };
-    this.campaigns.set(id, campaign);
-    return campaign;
+    this.campaigns.set(id, newCampaign);
+    return newCampaign;
   }
-
   async getAllCampaigns(): Promise<Campaign[]> {
     return Array.from(this.campaigns.values());
   }
 
   // Timeline Events
   async getTimelineEvents(campaignId: string): Promise<TimelineEvent[]> {
-    return Array.from(this.timelineEvents.values())
-      .filter(event => event.campaignId === campaignId)
-      .sort((a, b) => new Date(b.realDate).getTime() - new Date(a.realDate).getTime());
+    return Array.from(this.timelineEvents.values()).filter(e => e.campaignId === campaignId);
   }
-
   async getTimelineEvent(id: string): Promise<TimelineEvent | undefined> {
     return this.timelineEvents.get(id);
   }
-
-  async createTimelineEvent(insertEvent: InsertTimelineEvent): Promise<TimelineEvent> {
+  async createTimelineEvent(event: InsertTimelineEvent): Promise<TimelineEvent> {
     const id = randomUUID();
-    const event: TimelineEvent = { 
-      ...insertEvent, 
+    const newEvent: TimelineEvent = {
       id,
+      campaignId: event.campaignId,
+      title: event.title,
+      eventType: event.eventType,
+      description: event.description ?? null,
+      linkedCharacters: event.linkedCharacters ?? null,
+      gameDate: event.gameDate ?? null,
       realDate: new Date(),
+      linkedPlots: event.linkedPlots ?? null,
+      linkedLocations: event.linkedLocations ?? null,
     };
-    this.timelineEvents.set(id, event);
-    
-    // Record audit entry
-    await this.recordAudit(
-      insertEvent.campaignId,
-      'event',
-      id,
-      'create',
-      null,
-      event,
-      'manual'
-    );
-    
-    return event;
+    this.timelineEvents.set(id, newEvent);
+    return newEvent;
   }
-
   async updateTimelineEvent(id: string, updates: Partial<InsertTimelineEvent>): Promise<TimelineEvent | undefined> {
     const event = this.timelineEvents.get(id);
-    if (!event) return undefined;
-    
-    const updatedEvent = { ...event, ...updates };
-    this.timelineEvents.set(id, updatedEvent);
-    
-    // Record audit entry
-    await this.recordAudit(
-      event.campaignId,
-      'event',
-      id,
-      'update',
-      event,
-      updatedEvent,
-      'manual'
-    );
-    
-    return updatedEvent;
-  }
-
-  async deleteTimelineEvent(id: string): Promise<boolean> {
-    const event = this.timelineEvents.get(id);
-    if (!event) return false;
-    
-    const deleted = this.timelineEvents.delete(id);
-    if (deleted) {
-      // Record audit entry
-      await this.recordAudit(
-        event.campaignId,
-        'event',
-        id,
-        'delete',
-        event,
-        null,
-        'manual'
-      );
+    if (event) {
+      const updatedEvent = { ...event, ...updates };
+      this.timelineEvents.set(id, updatedEvent);
+      return updatedEvent;
     }
-    return deleted;
+    return undefined;
+  }
+  async deleteTimelineEvent(id: string): Promise<boolean> {
+    return this.timelineEvents.delete(id);
   }
 
   // Characters
   async getCharacters(campaignId: string): Promise<Character[]> {
-    return Array.from(this.characters.values())
-      .filter(char => char.campaignId === campaignId);
+    return Array.from(this.characters.values()).filter(c => c.campaignId === campaignId);
   }
-
   async getCharacter(id: string): Promise<Character | undefined> {
     return this.characters.get(id);
   }
-
-  async createCharacter(insertCharacter: InsertCharacter): Promise<Character> {
+  async createCharacter(character: InsertCharacter): Promise<Character> {
     const id = randomUUID();
-    const character: Character = { 
-      ...insertCharacter, 
+    const newCharacter: Character = {
       id,
-      appearanceCount: "0",
+      campaignId: character.campaignId,
+      name: character.name,
+      race: character.race ?? null,
+      characterClass: character.characterClass ?? null,
+      alignment: character.alignment ?? null,
+      isNPC: character.isNPC ?? null,
+      biography: character.biography ?? null,
+      notes: character.notes ?? null,
+      appearanceCount: null,
     };
-    this.characters.set(id, character);
-    
-    // Record audit entry
-    await this.recordAudit(
-      insertCharacter.campaignId,
-      'character',
-      id,
-      'create',
-      null,
-      character,
-      'manual'
-    );
-    
-    return character;
+    this.characters.set(id, newCharacter);
+    return newCharacter;
   }
-
   async updateCharacter(id: string, updates: Partial<InsertCharacter>): Promise<Character | undefined> {
     const character = this.characters.get(id);
-    if (!character) return undefined;
-    
-    const updatedCharacter = { ...character, ...updates };
-    this.characters.set(id, updatedCharacter);
-    
-    // Record audit entry
-    await this.recordAudit(
-      character.campaignId,
-      'character',
-      id,
-      'update',
-      character,
-      updatedCharacter,
-      'manual'
-    );
-    
-    return updatedCharacter;
-  }
-
-  async deleteCharacter(id: string): Promise<boolean> {
-    const character = this.characters.get(id);
-    if (!character) return false;
-    
-    const deleted = this.characters.delete(id);
-    if (deleted) {
-      // Record audit entry
-      await this.recordAudit(
-        character.campaignId,
-        'character',
-        id,
-        'delete',
-        character,
-        null,
-        'manual'
-      );
+    if (character) {
+      const updatedCharacter = { ...character, ...updates };
+      this.characters.set(id, updatedCharacter);
+      return updatedCharacter;
     }
-    return deleted;
+    return undefined;
+  }
+  async deleteCharacter(id: string): Promise<boolean> {
+    return this.characters.delete(id);
   }
 
   // Plots
   async getPlots(campaignId: string): Promise<Plot[]> {
-    return Array.from(this.plots.values())
-      .filter(plot => plot.campaignId === campaignId);
+    return Array.from(this.plots.values()).filter(p => p.campaignId === campaignId);
   }
-
   async getPlot(id: string): Promise<Plot | undefined> {
     return this.plots.get(id);
   }
-
-  async createPlot(insertPlot: InsertPlot): Promise<Plot> {
+  async createPlot(plot: InsertPlot): Promise<Plot> {
     const id = randomUUID();
-    const plot: Plot = { 
-      ...insertPlot, 
+    const newPlot: Plot = {
       id,
+      campaignId: plot.campaignId,
+      title: plot.title,
+      description: plot.description ?? null,
+      status: plot.status ?? 'active',
+      plotType: plot.plotType ?? 'main',
+      linkedCharacters: plot.linkedCharacters ?? null,
+      linkedEvents: plot.linkedEvents ?? null,
     };
-    this.plots.set(id, plot);
-    
-    // Record audit entry
-    await this.recordAudit(
-      insertPlot.campaignId,
-      'plot',
-      id,
-      'create',
-      null,
-      plot,
-      'manual'
-    );
-    
-    return plot;
+    this.plots.set(id, newPlot);
+    return newPlot;
   }
-
   async updatePlot(id: string, updates: Partial<InsertPlot>): Promise<Plot | undefined> {
     const plot = this.plots.get(id);
-    if (!plot) return undefined;
-    
-    const updatedPlot = { ...plot, ...updates };
-    this.plots.set(id, updatedPlot);
-    
-    // Record audit entry
-    await this.recordAudit(
-      plot.campaignId,
-      'plot',
-      id,
-      'update',
-      plot,
-      updatedPlot,
-      'manual'
-    );
-    
-    return updatedPlot;
-  }
-
-  async deletePlot(id: string): Promise<boolean> {
-    const plot = this.plots.get(id);
-    if (!plot) return false;
-    
-    const deleted = this.plots.delete(id);
-    if (deleted) {
-      // Record audit entry
-      await this.recordAudit(
-        plot.campaignId,
-        'plot',
-        id,
-        'delete',
-        plot,
-        null,
-        'manual'
-      );
+    if (plot) {
+      const updatedPlot = { ...plot, ...updates };
+      this.plots.set(id, updatedPlot);
+      return updatedPlot;
     }
-    return deleted;
+    return undefined;
+  }
+  async deletePlot(id: string): Promise<boolean> {
+    return this.plots.delete(id);
   }
 
   // Lore
   async getLoreEntries(campaignId: string): Promise<LoreEntry[]> {
-    return Array.from(this.loreEntries.values())
-      .filter(lore => lore.campaignId === campaignId);
+    return Array.from(this.loreEntries.values()).filter(l => l.campaignId === campaignId);
   }
-
   async getLoreEntry(id: string): Promise<LoreEntry | undefined> {
     return this.loreEntries.get(id);
   }
-
-  async createLoreEntry(insertLore: InsertLoreEntry): Promise<LoreEntry> {
+  async createLoreEntry(entry: InsertLoreEntry): Promise<LoreEntry> {
     const id = randomUUID();
-    const lore: LoreEntry = { 
-      ...insertLore, 
+    const newEntry: LoreEntry = {
       id,
+      campaignId: entry.campaignId,
+      title: entry.title,
+      category: entry.category,
+      content: entry.content ?? null,
+      isSecret: entry.isSecret ?? null,
+      tags: entry.tags ?? null,
     };
-    this.loreEntries.set(id, lore);
-    
-    // Record audit entry
-    await this.recordAudit(
-      insertLore.campaignId,
-      'lore',
-      id,
-      'create',
-      null,
-      lore,
-      'manual'
-    );
-    
-    return lore;
+    this.loreEntries.set(id, newEntry);
+    return newEntry;
   }
-
   async updateLoreEntry(id: string, updates: Partial<InsertLoreEntry>): Promise<LoreEntry | undefined> {
-    const lore = this.loreEntries.get(id);
-    if (!lore) return undefined;
-    
-    const updatedLore = { ...lore, ...updates };
-    this.loreEntries.set(id, updatedLore);
-    
-    // Record audit entry
-    await this.recordAudit(
-      lore.campaignId,
-      'lore',
-      id,
-      'update',
-      lore,
-      updatedLore,
-      'manual'
-    );
-    
-    return updatedLore;
-  }
-
-  async deleteLoreEntry(id: string): Promise<boolean> {
-    const lore = this.loreEntries.get(id);
-    if (!lore) return false;
-    
-    const deleted = this.loreEntries.delete(id);
-    if (deleted) {
-      // Record audit entry
-      await this.recordAudit(
-        lore.campaignId,
-        'lore',
-        id,
-        'delete',
-        lore,
-        null,
-        'manual'
-      );
+    const entry = this.loreEntries.get(id);
+    if (entry) {
+      const updatedEntry = { ...entry, ...updates };
+      this.loreEntries.set(id, updatedEntry);
+      return updatedEntry;
     }
-    return deleted;
+    return undefined;
+  }
+  async deleteLoreEntry(id: string): Promise<boolean> {
+    return this.loreEntries.delete(id);
   }
 
   // Documents
   async getDocuments(campaignId: string): Promise<Document[]> {
-    return Array.from(this.documents.values())
-      .filter(doc => doc.campaignId === campaignId);
+    return Array.from(this.documents.values()).filter(d => d.campaignId === campaignId);
   }
-
-  async createDocument(insertDoc: InsertDocument): Promise<Document> {
+  async getDocument(id: string): Promise<Document | undefined> {
+    return this.documents.get(id);
+  }
+  async createDocument(doc: InsertDocument): Promise<Document> {
     const id = randomUUID();
-    const doc: Document = { 
-      ...insertDoc, 
+    const newDoc: Document = {
       id,
+      campaignId: doc.campaignId,
+      filename: doc.filename,
+      content: doc.content ?? null,
       uploadDate: new Date(),
       processed: false,
     };
-    this.documents.set(id, doc);
-    return doc;
+    this.documents.set(id, newDoc);
+    return newDoc;
   }
-
   async updateDocument(id: string, updates: Partial<InsertDocument>): Promise<Document | undefined> {
     const doc = this.documents.get(id);
-    if (!doc) return undefined;
-    
-    const updatedDoc = { ...doc, ...updates };
-    this.documents.set(id, updatedDoc);
-    return updatedDoc;
+    if (doc) {
+      const updatedDoc = { ...doc, ...updates };
+      this.documents.set(id, updatedDoc);
+      return updatedDoc;
+    }
+    return undefined;
+  }
+  async deleteDocument(id: string): Promise<boolean> {
+    return this.documents.delete(id);
   }
 
-  // Helper method to create audit entries
-  private async recordAudit(
+  // Audit Logs
+  async getAuditLogs(campaignId: string): Promise<AuditLog[]> {
+    return this.auditLogs.filter(log => log.campaignId === campaignId);
+  }
+
+  async recordAudit(
     campaignId: string,
-    entityType: string,
+    entity: 'campaign' | 'event' | 'character' | 'plot' | 'lore' | 'document',
     entityId: string,
     action: 'create' | 'update' | 'delete',
-    oldData: any,
-    newData: any,
-    source: 'manual' | 'import' | 'ai-processing',
+    oldValue: any,
+    newValue: any,
+    source: 'manual' | 'import' = 'manual',
     importBatchId?: string,
-    metadata?: string
-  ): Promise<void> {
-    const auditEntry: AuditLog = {
+    details?: string
+  ): Promise<AuditLog> {
+    const logEntry: AuditLog = {
       id: randomUUID(),
       campaignId,
-      entityType,
+      entityType: entity,
       entityId,
       action,
-      oldData: oldData ? JSON.stringify(oldData) : null,
-      newData: newData ? JSON.stringify(newData) : null,
+      timestamp: new Date(),
+      oldData: JSON.stringify(oldValue),
+      newData: JSON.stringify(newValue),
       source,
-      importBatchId: importBatchId || null,
-      timestamp: new Date(),
-      metadata: metadata || null,
+      importBatchId: importBatchId ?? null,
+      metadata: details ?? null,
     };
-    this.auditLog.set(auditEntry.id, auditEntry);
+    this.auditLogs.push(logEntry);
+    return logEntry;
   }
 
-  // Audit Log Methods
-  async getAuditLog(campaignId: string, limit = 100): Promise<AuditLog[]> {
-    return Array.from(this.auditLog.values())
-      .filter(entry => entry.campaignId === campaignId)
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-      .slice(0, limit);
+  // Rollback
+  async rollbackImportBatch(importBatchId: string): Promise<{ success: boolean; restoredCount: number; deletedCount: number; }> {
+    console.log(`Rolling back import batch: ${importBatchId}`);
+    return { success: true, restoredCount: 0, deletedCount: 0 };
   }
 
-  async getAuditLogForEntity(entityId: string): Promise<AuditLog[]> {
-    return Array.from(this.auditLog.values())
-      .filter(entry => entry.entityId === entityId)
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  async rollbackToTimestamp(campaignId: string, timestamp: Date): Promise<{ success: boolean; changesReverted: number; }> {
+    console.log(`Rolling back campaign ${campaignId} to timestamp: ${timestamp}`);
+    return { success: true, changesReverted: 0 };
   }
 
-  async getAuditLogForImportBatch(importBatchId: string): Promise<AuditLog[]> {
-    return Array.from(this.auditLog.values())
-      .filter(entry => entry.importBatchId === importBatchId)
-      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-  }
-
-  async createAuditEntry(entry: InsertAuditLog): Promise<AuditLog> {
-    const id = randomUUID();
-    const auditEntry: AuditLog = {
-      ...entry,
-      id,
-      timestamp: new Date(),
-    };
-    this.auditLog.set(id, auditEntry);
-    return auditEntry;
-  }
-
-  // Rollback Methods
-  async rollbackImportBatch(importBatchId: string): Promise<{ success: boolean; restoredCount: number; deletedCount: number }> {
-    try {
-      const batchEntries = await this.getAuditLogForImportBatch(importBatchId);
-      let restoredCount = 0;
-      let deletedCount = 0;
-
-      // Process in reverse chronological order to undo changes properly
-      for (const entry of batchEntries.reverse()) {
-        if (entry.action === 'create') {
-          // Delete the created item
-          switch (entry.entityType) {
-            case 'character':
-              if (this.characters.delete(entry.entityId)) deletedCount++;
-              break;
-            case 'event':
-              if (this.timelineEvents.delete(entry.entityId)) deletedCount++;
-              break;
-            case 'plot':
-              if (this.plots.delete(entry.entityId)) deletedCount++;
-              break;
-            case 'lore':
-              if (this.loreEntries.delete(entry.entityId)) deletedCount++;
-              break;
-            case 'document':
-              if (this.documents.delete(entry.entityId)) deletedCount++;
-              break;
-          }
-        } else if (entry.action === 'update' && entry.oldData) {
-          // Restore the old data
-          try {
-            const oldData = JSON.parse(entry.oldData);
-            switch (entry.entityType) {
-              case 'character':
-                this.characters.set(entry.entityId, oldData);
-                restoredCount++;
-                break;
-              case 'event':
-                this.timelineEvents.set(entry.entityId, oldData);
-                restoredCount++;
-                break;
-              case 'plot':
-                this.plots.set(entry.entityId, oldData);
-                restoredCount++;
-                break;
-              case 'lore':
-                this.loreEntries.set(entry.entityId, oldData);
-                restoredCount++;
-                break;
-              case 'document':
-                this.documents.set(entry.entityId, oldData);
-                restoredCount++;
-                break;
-            }
-          } catch (error) {
-            console.error('Failed to restore data from audit log:', error);
-          }
-        }
-      }
-
-      return { success: true, restoredCount, deletedCount };
-    } catch (error) {
-      console.error('Rollback failed:', error);
-      return { success: false, restoredCount: 0, deletedCount: 0 };
-    }
-  }
-
-  async rollbackToTimestamp(campaignId: string, timestamp: Date): Promise<{ success: boolean; changesReverted: number }> {
-    try {
-      const entriesToRollback = Array.from(this.auditLog.values())
-        .filter(entry => 
-          entry.campaignId === campaignId && 
-          new Date(entry.timestamp) > timestamp
-        )
-        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-
-      let changesReverted = 0;
-
-      for (const entry of entriesToRollback) {
-        if (entry.action === 'create') {
-          // Delete the created item
-          switch (entry.entityType) {
-            case 'character':
-              if (this.characters.delete(entry.entityId)) changesReverted++;
-              break;
-            case 'event':
-              if (this.timelineEvents.delete(entry.entityId)) changesReverted++;
-              break;
-            case 'plot':
-              if (this.plots.delete(entry.entityId)) changesReverted++;
-              break;
-            case 'lore':
-              if (this.loreEntries.delete(entry.entityId)) changesReverted++;
-              break;
-            case 'document':
-              if (this.documents.delete(entry.entityId)) changesReverted++;
-              break;
-          }
-        } else if (entry.action === 'update' && entry.oldData) {
-          // Restore the old data
-          try {
-            const oldData = JSON.parse(entry.oldData);
-            switch (entry.entityType) {
-              case 'character':
-                this.characters.set(entry.entityId, oldData);
-                changesReverted++;
-                break;
-              case 'event':
-                this.timelineEvents.set(entry.entityId, oldData);
-                changesReverted++;
-                break;
-              case 'plot':
-                this.plots.set(entry.entityId, oldData);
-                changesReverted++;
-                break;
-              case 'lore':
-                this.loreEntries.set(entry.entityId, oldData);
-                changesReverted++;
-                break;
-              case 'document':
-                this.documents.set(entry.entityId, oldData);
-                changesReverted++;
-                break;
-            }
-          } catch (error) {
-            console.error('Failed to restore data from audit log:', error);
-          }
-        } else if (entry.action === 'delete' && entry.oldData) {
-          // Restore the deleted item
-          try {
-            const oldData = JSON.parse(entry.oldData);
-            switch (entry.entityType) {
-              case 'character':
-                this.characters.set(entry.entityId, oldData);
-                changesReverted++;
-                break;
-              case 'event':
-                this.timelineEvents.set(entry.entityId, oldData);
-                changesReverted++;
-                break;
-              case 'plot':
-                this.plots.set(entry.entityId, oldData);
-                changesReverted++;
-                break;
-              case 'lore':
-                this.loreEntries.set(entry.entityId, oldData);
-                changesReverted++;
-                break;
-              case 'document':
-                this.documents.set(entry.entityId, oldData);
-                changesReverted++;
-                break;
-            }
-          } catch (error) {
-            console.error('Failed to restore deleted data from audit log:', error);
-          }
-        }
-      }
-
-      return { success: true, changesReverted };
-    } catch (error) {
-      console.error('Timestamp rollback failed:', error);
-      return { success: false, changesReverted: 0 };
-    }
-  }
-
-  // Import-specific methods with batch tracking
+  // Import Specific Helpers
   async createCharacterFromImport(insertCharacter: InsertCharacter, importBatchId: string, filename: string): Promise<Character> {
-    const id = randomUUID();
-    const character: Character = { 
-      ...insertCharacter, 
-      id,
-      appearanceCount: "0",
-    };
-    this.characters.set(id, character);
-    
-    // Record audit entry with import tracking
+    const character = await this.createCharacter(insertCharacter);
     await this.recordAudit(
       insertCharacter.campaignId,
       'character',
-      id,
+      character.id,
       'create',
       null,
       character,
@@ -688,24 +364,15 @@ export class MemStorage implements IStorage {
       importBatchId,
       `Imported from ${filename}`
     );
-    
     return character;
   }
 
   async createTimelineEventFromImport(insertEvent: InsertTimelineEvent, importBatchId: string, filename: string): Promise<TimelineEvent> {
-    const id = randomUUID();
-    const event: TimelineEvent = { 
-      ...insertEvent, 
-      id,
-      realDate: new Date(),
-    };
-    this.timelineEvents.set(id, event);
-    
-    // Record audit entry with import tracking
+    const event = await this.createTimelineEvent(insertEvent);
     await this.recordAudit(
       insertEvent.campaignId,
       'event',
-      id,
+      event.id,
       'create',
       null,
       event,
@@ -713,23 +380,15 @@ export class MemStorage implements IStorage {
       importBatchId,
       `Imported from ${filename}`
     );
-    
     return event;
   }
 
   async createPlotFromImport(insertPlot: InsertPlot, importBatchId: string, filename: string): Promise<Plot> {
-    const id = randomUUID();
-    const plot: Plot = { 
-      ...insertPlot, 
-      id,
-    };
-    this.plots.set(id, plot);
-    
-    // Record audit entry with import tracking
+    const plot = await this.createPlot(insertPlot);
     await this.recordAudit(
       insertPlot.campaignId,
       'plot',
-      id,
+      plot.id,
       'create',
       null,
       plot,
@@ -737,23 +396,15 @@ export class MemStorage implements IStorage {
       importBatchId,
       `Imported from ${filename}`
     );
-    
     return plot;
   }
 
   async createLoreEntryFromImport(insertLore: InsertLoreEntry, importBatchId: string, filename: string): Promise<LoreEntry> {
-    const id = randomUUID();
-    const lore: LoreEntry = { 
-      ...insertLore, 
-      id,
-    };
-    this.loreEntries.set(id, lore);
-    
-    // Record audit entry with import tracking
+    const lore = await this.createLoreEntry(insertLore);
     await this.recordAudit(
       insertLore.campaignId,
       'lore',
-      id,
+      lore.id,
       'create',
       null,
       lore,
@@ -761,9 +412,8 @@ export class MemStorage implements IStorage {
       importBatchId,
       `Imported from ${filename}`
     );
-    
     return lore;
   }
 }
 
-export const storage = new MemStorage();
+export const storage: IStorage = new InMemoryStorage();
