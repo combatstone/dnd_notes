@@ -1,0 +1,971 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DM's Codex - Campaign Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                },
+                fontFamily: {
+                    sans: ["Inter", "system-ui", "sans-serif"],
+                }
+            },
+        }
+    };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --background: hsl(222 84% 5%);
+            --foreground: hsl(210 40% 98%);
+            --card: hsl(222 84% 8%);
+            --card-foreground: hsl(210 40% 98%);
+            --popover: hsl(222 84% 8%);
+            --popover-foreground: hsl(210 40% 98%);
+            --primary: hsl(240 70% 62%);
+            --primary-foreground: hsl(210 40% 98%);
+            --secondary: hsl(217 32% 17%);
+            --secondary-foreground: hsl(210 40% 98%);
+            --muted: hsl(217 32% 17%);
+            --muted-foreground: hsl(215 20% 65%);
+            --accent: hsl(43 96% 56%);
+            --accent-foreground: hsl(222 84% 5%);
+            --destructive: hsl(0 62% 30%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(217 32% 17%);
+            --input: hsl(217 32% 17%);
+            --ring: hsl(240 70% 62%);
+            --radius: 8px;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .content-fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card-hover {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: hsl(240 70% 62%);
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: 11px;
+            top: 24px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: hsl(240 70% 62%);
+            border: 2px solid hsl(222 84% 8%);
+        }
+    </style>
+</head>
+
+<body class="bg-background text-foreground">
+    <!-- @COMPONENT: Layout Container -->
+    <div class="flex h-screen overflow-hidden">
+        <!-- @COMPONENT: Sidebar Navigation -->
+        <nav class="w-64 bg-card border-r border-border flex flex-col">
+            <!-- @COMPONENT: Logo/Header -->
+            <div class="p-6 border-b border-border">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-dragon text-primary-foreground"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">DM's Codex</h1>
+                        <p class="text-sm text-muted-foreground">Campaign Manager</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- @COMPONENT: Navigation Menu -->
+            <div class="flex-1 p-4">
+                <div class="space-y-2">
+                    <a href="#" data-view="dashboard" class="nav-item flex items-center gap-3 p-3 rounded-lg bg-primary text-primary-foreground font-medium">
+                        <i class="fas fa-home w-5"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" data-view="timeline" class="nav-item flex items-center gap-3 p-3 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                        <i class="fas fa-clock w-5"></i>
+                        Timeline
+                    </a>
+                    <a href="#" data-view="characters" class="nav-item flex items-center gap-3 p-3 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                        <i class="fas fa-users w-5"></i>
+                        Characters & NPCs
+                    </a>
+                    <a href="#" data-view="plots" class="nav-item flex items-center gap-3 p-3 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                        <i class="fas fa-map w-5"></i>
+                        Plot Summary
+                    </a>
+                    <a href="#" data-view="documents" class="nav-item flex items-center gap-3 p-3 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                        <i class="fas fa-file-upload w-5"></i>
+                        Import Documents
+                    </a>
+                </div>
+
+                <!-- @COMPONENT: Quick Actions -->
+                <div class="mt-8">
+                    <h3 class="text-sm font-medium text-muted-foreground mb-3">Quick Actions</h3>
+                    <div class="space-y-2">
+                        <button class="w-full flex items-center gap-3 p-2 text-sm rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                            <i class="fas fa-plus w-4"></i>
+                            Add Event
+                        </button>
+                        <button class="w-full flex items-center gap-3 p-2 text-sm rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                            <i class="fas fa-user-plus w-4"></i>
+                            New Character
+                        </button>
+                        <button class="w-full flex items-center gap-3 p-2 text-sm rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                            <i class="fas fa-search w-4"></i>
+                            Quick Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- @COMPONENT: Campaign Info -->
+            <div class="p-4 border-t border-border">
+                <div class="bg-muted rounded-lg p-3">
+                    <h4 class="font-medium text-sm">Current Campaign</h4>
+                    <p class="text-xs text-muted-foreground" data-bind="campaign.name">The Lost Mines of Phandelver</p>
+                    <p class="text-xs text-muted-foreground mt-1">Session 12 • Level 4</p>
+                </div>
+            </div>
+        </nav>
+        <!-- @END_COMPONENT: Sidebar Navigation -->
+
+        <!-- @COMPONENT: Main Content Area -->
+        <main class="flex-1 overflow-auto">
+            <!-- @COMPONENT: Dashboard View -->
+            <div id="dashboard-view" class="view-content p-8">
+                <!-- @COMPONENT: Header with Search -->
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold">Campaign Dashboard</h2>
+                        <p class="text-muted-foreground mt-1">Manage your D&D campaign notes and story</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"></i>
+                            <input type="text" placeholder="Search everything..." class="pl-10 pr-4 py-2 bg-input border border-border rounded-lg w-64 focus:ring-2 focus:ring-ring focus:border-transparent">
+                        </div>
+                        <button class="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>
+                            Quick Add
+                        </button>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Stats Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-muted-foreground">Timeline Events</p>
+                                <p class="text-2xl font-bold" data-bind="stats.timelineEvents">47</p>
+                            </div>
+                            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-primary text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-muted-foreground">Characters</p>
+                                <p class="text-2xl font-bold" data-bind="stats.characters">23</p>
+                            </div>
+                            <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-users text-accent text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-muted-foreground">Active Plots</p>
+                                <p class="text-2xl font-bold" data-bind="stats.activePlots">8</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-map text-green-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-muted-foreground">Documents</p>
+                                <p class="text-2xl font-bold" data-bind="stats.documents">12</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-file-alt text-blue-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Main Dashboard Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- @COMPONENT: Recent Timeline Events -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-card border border-border rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-semibold">Recent Timeline Events</h3>
+                                <a href="#" data-view="timeline" class="text-primary text-sm hover:underline">View All</a>
+                            </div>
+                            <div class="space-y-4">
+                                <!-- @MAP: recentEvents.map(event => ( -->
+                                <div class="flex items-start gap-4 p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                                    <div class="w-2 h-2 bg-primary rounded-full mt-3 flex-shrink-0"></div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <h4 class="font-medium" data-bind="event.title">Battle at Cragmaw Hideout</h4>
+                                            <span class="text-xs bg-primary/20 text-primary px-2 py-1 rounded">Session 11</span>
+                                        </div>
+                                        <p class="text-sm text-muted-foreground" data-bind="event.description">Players defeated Klarg and rescued Gundren Rockseeker. Found important documents about Wave Echo Cave.</p>
+                                        <div class="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                                            <span data-bind="event.date">March 15, 2024</span>
+                                            <span>•</span>
+                                            <span data-bind="event.inGameDate">Day 3 of Flamerule</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4 p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                                    <div class="w-2 h-2 bg-accent rounded-full mt-3 flex-shrink-0"></div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <h4 class="font-medium" data-bind="event.title">Arrival in Phandalin</h4>
+                                            <span class="text-xs bg-accent/20 text-accent px-2 py-1 rounded">Session 10</span>
+                                        </div>
+                                        <p class="text-sm text-muted-foreground" data-bind="event.description">Party reached Phandalin and met with Sister Garaele. Learned about the Redbrands' activities.</p>
+                                        <div class="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                                            <span data-bind="event.date">March 8, 2024</span>
+                                            <span>•</span>
+                                            <span data-bind="event.inGameDate">Day 2 of Flamerule</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- @END_MAP )) -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- @COMPONENT: Character Spotlight & Quick Links -->
+                    <div class="space-y-6">
+                        <!-- @COMPONENT: Character Spotlight -->
+                        <div class="bg-card border border-border rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4">Character Spotlight</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold">
+                                        T
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium" data-bind="character.name">Thorin Ironforge</h4>
+                                        <p class="text-sm text-muted-foreground" data-bind="character.details">Dwarf Fighter • Player Character</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center text-accent-foreground font-bold">
+                                        S
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium" data-bind="character.name">Sildar Hallwinter</h4>
+                                        <p class="text-sm text-muted-foreground" data-bind="character.details">Human Noble • Important NPC</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="w-full mt-4 text-sm text-primary hover:underline">View All Characters</button>
+                        </div>
+
+                        <!-- @COMPONENT: Active Plots -->
+                        <div class="bg-card border border-border rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4">Active Plot Threads</h3>
+                            <div class="space-y-3">
+                                <div class="p-3 bg-muted/30 rounded-lg">
+                                    <h4 class="font-medium text-sm" data-bind="plot.title">The Lost Mine</h4>
+                                    <p class="text-xs text-muted-foreground mt-1" data-bind="plot.status">Main Quest - In Progress</p>
+                                </div>
+                                <div class="p-3 bg-muted/30 rounded-lg">
+                                    <h4 class="font-medium text-sm" data-bind="plot.title">Redbrand Ruffians</h4>
+                                    <p class="text-xs text-muted-foreground mt-1" data-bind="plot.status">Side Quest - Active</p>
+                                </div>
+                                <div class="p-3 bg-muted/30 rounded-lg">
+                                    <h4 class="font-medium text-sm" data-bind="plot.title">Dragon Threat</h4>
+                                    <p class="text-xs text-muted-foreground mt-1" data-bind="plot.status">Future Hook - Planned</p>
+                                </div>
+                            </div>
+                            <button class="w-full mt-4 text-sm text-primary hover:underline">Manage Plots</button>
+                        </div>
+
+                        <!-- @COMPONENT: AI Suggestions -->
+                        <div class="bg-card border border-border rounded-lg p-6 border-accent/20">
+                            <div class="flex items-center gap-2 mb-4">
+                                <i class="fas fa-magic text-accent"></i>
+                                <h3 class="text-lg font-semibold">AI Suggestions</h3>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="p-3 bg-accent/10 rounded-lg border border-accent/20">
+                                    <p class="text-sm">New character detected: "Toblen Stonehill" - suggest adding to NPC database?</p>
+                                    <div class="flex gap-2 mt-2">
+                                        <button class="text-xs bg-accent text-accent-foreground px-3 py-1 rounded">Add</button>
+                                        <button class="text-xs text-muted-foreground hover:text-foreground">Dismiss</button>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-primary/10 rounded-lg border border-primary/20">
+                                    <p class="text-sm">Timeline gap detected between sessions 9-10. Add travel event?</p>
+                                    <div class="flex gap-2 mt-2">
+                                        <button class="text-xs bg-primary text-primary-foreground px-3 py-1 rounded">Review</button>
+                                        <button class="text-xs text-muted-foreground hover:text-foreground">Later</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- @COMPONENT: Timeline View -->
+            <div id="timeline-view" class="view-content p-8 hidden">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold">Campaign Timeline</h2>
+                        <p class="text-muted-foreground mt-1">Chronological events and milestones</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <select class="bg-input border border-border rounded-lg px-3 py-2">
+                            <option>All Events</option>
+                            <option>Combat</option>
+                            <option>Story</option>
+                            <option>Character Development</option>
+                        </select>
+                        <button class="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>
+                            Add Event
+                        </button>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Timeline Container -->
+                <div class="max-w-4xl">
+                    <div class="relative">
+                        <!-- @MAP: timelineEvents.map(event => ( -->
+                        <div class="timeline-item relative pl-12 pb-8">
+                            <div class="timeline-dot"></div>
+                            <div class="bg-card border border-border rounded-lg p-6 card-hover">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div>
+                                        <h3 class="text-lg font-semibold" data-bind="event.title">Battle at Cragmaw Hideout</h3>
+                                        <div class="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
+                                            <span data-bind="event.realDate">March 15, 2024</span>
+                                            <span>•</span>
+                                            <span data-bind="event.gameDate">Day 3 of Flamerule, 1491 DR</span>
+                                            <span>•</span>
+                                            <span class="bg-primary/20 text-primary px-2 py-1 rounded" data-bind="event.session">Session 11</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button class="text-muted-foreground hover:text-foreground">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-muted-foreground hover:text-destructive">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-muted-foreground mb-4" data-bind="event.description">
+                                    The party successfully infiltrated the Cragmaw Hideout and defeated Klarg, the bugbear leader. 
+                                    They rescued Gundren Rockseeker and discovered important documents linking the hideout to Wave Echo Cave.
+                                    Thorin dealt the killing blow to Klarg, while Lyra's healing kept the party alive during the intense combat.
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm" data-bind="tag">Combat</span>
+                                    <span class="bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm" data-bind="tag">Rescue Mission</span>
+                                    <span class="bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm" data-bind="tag">Plot Advancement</span>
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-border">
+                                    <h4 class="text-sm font-medium mb-2">Connected Characters:</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        <a href="#" class="text-primary hover:underline text-sm" data-bind="character.name">Thorin Ironforge</a>
+                                        <a href="#" class="text-primary hover:underline text-sm" data-bind="character.name">Lyra Moonwhisper</a>
+                                        <a href="#" class="text-primary hover:underline text-sm" data-bind="character.name">Gundren Rockseeker</a>
+                                        <a href="#" class="text-primary hover:underline text-sm" data-bind="character.name">Klarg</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item relative pl-12 pb-8">
+                            <div class="timeline-dot"></div>
+                            <div class="bg-card border border-border rounded-lg p-6 card-hover">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div>
+                                        <h3 class="text-lg font-semibold" data-bind="event.title">Arrival in Phandalin</h3>
+                                        <div class="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
+                                            <span data-bind="event.realDate">March 8, 2024</span>
+                                            <span>•</span>
+                                            <span data-bind="event.gameDate">Day 2 of Flamerule, 1491 DR</span>
+                                            <span>•</span>
+                                            <span class="bg-accent/20 text-accent px-2 py-1 rounded" data-bind="event.session">Session 10</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button class="text-muted-foreground hover:text-foreground">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-muted-foreground hover:text-destructive">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-muted-foreground mb-4" data-bind="event.description">
+                                    After traveling the Triboar Trail, the party finally reached the frontier town of Phandalin. 
+                                    They met with Sister Garaele at the shrine and learned about the Redbrands' terrorizing activities. 
+                                    The party decided to investigate the manor house rumors.
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm" data-bind="tag">Travel</span>
+                                    <span class="bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm" data-bind="tag">Investigation</span>
+                                    <span class="bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm" data-bind="tag">Social</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- @COMPONENT: Characters View -->
+            <div id="characters-view" class="view-content p-8 hidden">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold">Characters & NPCs</h2>
+                        <p class="text-muted-foreground mt-1">Manage player characters and non-player characters</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="flex bg-muted rounded-lg p-1">
+                            <button class="px-3 py-1 bg-primary text-primary-foreground rounded text-sm">All</button>
+                            <button class="px-3 py-1 text-muted-foreground hover:text-foreground rounded text-sm">PCs</button>
+                            <button class="px-3 py-1 text-muted-foreground hover:text-foreground rounded text-sm">NPCs</button>
+                        </div>
+                        <button class="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>
+                            Add Character
+                        </button>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Characters Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- @MAP: characters.map(character => ( -->
+                    <div class="bg-card border border-border rounded-lg p-6 card-hover">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg">
+                                    T
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold" data-bind="character.name">Thorin Ironforge</h3>
+                                    <p class="text-sm text-muted-foreground" data-bind="character.basicInfo">Dwarf Fighter</p>
+                                </div>
+                            </div>
+                            <span class="bg-primary/20 text-primary px-2 py-1 rounded text-xs" data-bind="character.type">PC</span>
+                        </div>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Class:</span>
+                                <span data-bind="character.class">Fighter</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Race:</span>
+                                <span data-bind="character.race">Mountain Dwarf</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Alignment:</span>
+                                <span data-bind="character.alignment">Lawful Good</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Level:</span>
+                                <span data-bind="character.level">4</span>
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-muted-foreground mb-4" data-bind="character.notes">
+                            A stalwart dwarf warrior seeking to reclaim his clan's lost honor. 
+                            Has a particular hatred for orcs and goblins due to past clan conflicts.
+                        </p>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex gap-2">
+                                <button class="text-primary hover:text-primary/80 text-sm">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Edit
+                                </button>
+                                <button class="text-muted-foreground hover:text-foreground text-sm">
+                                    <i class="fas fa-link mr-1"></i>
+                                    Links
+                                </button>
+                            </div>
+                            <span class="text-xs text-muted-foreground" data-bind="character.lastUpdated">Updated 2d ago</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-card border border-border rounded-lg p-6 card-hover">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-accent rounded-full flex items-center justify-center text-accent-foreground font-bold text-lg">
+                                    G
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold" data-bind="character.name">Gundren Rockseeker</h3>
+                                    <p class="text-sm text-muted-foreground" data-bind="character.basicInfo">Dwarf Merchant</p>
+                                </div>
+                            </div>
+                            <span class="bg-accent/20 text-accent px-2 py-1 rounded text-xs" data-bind="character.type">NPC</span>
+                        </div>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Occupation:</span>
+                                <span data-bind="character.occupation">Merchant</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Race:</span>
+                                <span data-bind="character.race">Dwarf</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Alignment:</span>
+                                <span data-bind="character.alignment">Neutral Good</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Status:</span>
+                                <span class="text-green-500" data-bind="character.status">Alive</span>
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-muted-foreground mb-4" data-bind="character.notes">
+                            A merchant dwarf who hired the party to escort supplies. Brother to Nundro and Tharden. 
+                            Has knowledge of Wave Echo Cave's location.
+                        </p>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex gap-2">
+                                <button class="text-primary hover:text-primary/80 text-sm">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Edit
+                                </button>
+                                <button class="text-muted-foreground hover:text-foreground text-sm">
+                                    <i class="fas fa-link mr-1"></i>
+                                    Links
+                                </button>
+                            </div>
+                            <span class="text-xs text-muted-foreground" data-bind="character.lastUpdated">Updated 1w ago</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-card border border-border rounded-lg p-6 card-hover">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                    L
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold" data-bind="character.name">Lyra Moonwhisper</h3>
+                                    <p class="text-sm text-muted-foreground" data-bind="character.basicInfo">Elf Cleric</p>
+                                </div>
+                            </div>
+                            <span class="bg-primary/20 text-primary px-2 py-1 rounded text-xs" data-bind="character.type">PC</span>
+                        </div>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Class:</span>
+                                <span data-bind="character.class">Life Cleric</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Race:</span>
+                                <span data-bind="character.race">Wood Elf</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Alignment:</span>
+                                <span data-bind="character.alignment">Neutral Good</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Level:</span>
+                                <span data-bind="character.level">4</span>
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-muted-foreground mb-4" data-bind="character.notes">
+                            A wise elven cleric devoted to preserving life and nature. Serves as the party's primary healer and moral compass.
+                        </p>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex gap-2">
+                                <button class="text-primary hover:text-primary/80 text-sm">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Edit
+                                </button>
+                                <button class="text-muted-foreground hover:text-foreground text-sm">
+                                    <i class="fas fa-link mr-1"></i>
+                                    Links
+                                </button>
+                            </div>
+                            <span class="text-xs text-muted-foreground" data-bind="character.lastUpdated">Updated 3d ago</span>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+
+            <!-- @COMPONENT: Document Upload View -->
+            <div id="documents-view" class="view-content p-8 hidden">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold">Import Documents</h2>
+                        <p class="text-muted-foreground mt-1">Upload and analyze campaign notes automatically</p>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Upload Area -->
+                <div class="max-w-4xl">
+                    <div class="bg-card border-2 border-dashed border-border rounded-lg p-12 text-center mb-8">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-cloud-upload-alt text-primary text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2">Drop files here or click to upload</h3>
+                        <p class="text-muted-foreground mb-4">Support for .txt, .pdf, .doc, and .docx files up to 50MB</p>
+                        <div class="flex justify-center gap-4">
+                            <button class="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                                Choose Files
+                            </button>
+                            <button class="border border-border px-6 py-2 rounded-lg hover:bg-muted transition-colors">
+                                Import from URL
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- @COMPONENT: Processing Status -->
+                    <div class="bg-card border border-border rounded-lg p-6 mb-8">
+                        <h3 class="text-lg font-semibold mb-4">Processing Queue</h3>
+                        
+                        <!-- @MAP: processingFiles.map(file => ( -->
+                        <div class="flex items-center justify-between p-4 bg-muted/30 rounded-lg mb-3">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-file-alt text-muted-foreground"></i>
+                                <div>
+                                    <h4 class="font-medium" data-bind="file.name">session_notes_11.txt</h4>
+                                    <p class="text-sm text-muted-foreground" data-bind="file.size">2.3 KB</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-accent rounded-full animate-pulse"></div>
+                                    <span class="text-sm text-muted-foreground" data-bind="file.status">Processing...</span>
+                                </div>
+                                <button class="text-muted-foreground hover:text-destructive">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-green-500/10 border border-green-500/20 rounded-lg mb-3">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-file-pdf text-red-500"></i>
+                                <div>
+                                    <h4 class="font-medium" data-bind="file.name">campaign_background.pdf</h4>
+                                    <p class="text-sm text-muted-foreground" data-bind="file.size">1.2 MB</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <span class="text-sm text-green-500" data-bind="file.status">Completed</span>
+                                </div>
+                                <button class="text-primary hover:text-primary/80">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+
+                    <!-- @COMPONENT: AI Analysis Results -->
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <div class="flex items-center gap-2 mb-6">
+                            <i class="fas fa-magic text-accent"></i>
+                            <h3 class="text-lg font-semibold">AI Analysis Results</h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- @COMPONENT: Detected Characters -->
+                            <div class="bg-muted/30 rounded-lg p-4">
+                                <h4 class="font-medium mb-3 flex items-center gap-2">
+                                    <i class="fas fa-users text-accent"></i>
+                                    Characters Found (3)
+                                </h4>
+                                <div class="space-y-2">
+                                    <!-- @MAP: detectedCharacters.map(character => ( -->
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm" data-bind="character.name">Toblen Stonehill</span>
+                                        <button class="text-xs bg-accent text-accent-foreground px-2 py-1 rounded hover:bg-accent/90">
+                                            Add
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm" data-bind="character.name">Sister Garaele</span>
+                                        <button class="text-xs bg-accent text-accent-foreground px-2 py-1 rounded hover:bg-accent/90">
+                                            Add
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm" data-bind="character.name">Harbin Wester</span>
+                                        <button class="text-xs bg-accent text-accent-foreground px-2 py-1 rounded hover:bg-accent/90">
+                                            Add
+                                        </button>
+                                    </div>
+                                    <!-- @END_MAP )) -->
+                                </div>
+                            </div>
+
+                            <!-- @COMPONENT: Timeline Events -->
+                            <div class="bg-muted/30 rounded-lg p-4">
+                                <h4 class="font-medium mb-3 flex items-center gap-2">
+                                    <i class="fas fa-clock text-primary"></i>
+                                    Timeline Events (2)
+                                </h4>
+                                <div class="space-y-2">
+                                    <!-- @MAP: detectedEvents.map(event => ( -->
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm" data-bind="event.title">Meeting at Lionshield Coster</span>
+                                        <button class="text-xs bg-primary text-primary-foreground px-2 py-1 rounded hover:bg-primary/90">
+                                            Add
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm" data-bind="event.title">Redbrand Confrontation</span>
+                                        <button class="text-xs bg-primary text-primary-foreground px-2 py-1 rounded hover:bg-primary/90">
+                                            Add
+                                        </button>
+                                    </div>
+                                    <!-- @END_MAP )) -->
+                                </div>
+                            </div>
+
+                            <!-- @COMPONENT: Plot Hooks -->
+                            <div class="bg-muted/30 rounded-lg p-4">
+                                <h4 class="font-medium mb-3 flex items-center gap-2">
+                                    <i class="fas fa-map text-green-500"></i>
+                                    Plot Hooks (4)
+                                </h4>
+                                <div class="space-y-2">
+                                    <!-- @MAP: detectedPlots.map(plot => ( -->
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm" data-bind="plot.title">Tresendar Manor Mystery</span>
+                                        <button class="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">
+                                            Add
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm" data-bind="plot.title">Missing Persons</span>
+                                        <button class="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">
+                                            Add
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm" data-bind="plot.title">Dragon Cult Rumors</span>
+                                        <button class="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">
+                                            Add
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm" data-bind="plot.title">Conyberry Investigation</span>
+                                        <button class="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">
+                                            Add
+                                        </button>
+                                    </div>
+                                    <!-- @END_MAP )) -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-6 border-t border-border">
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm text-muted-foreground">Review suggestions and add relevant content to your campaign</p>
+                                <div class="flex gap-2">
+                                    <button class="text-sm border border-border px-4 py-2 rounded-lg hover:bg-muted transition-colors">
+                                        Add Selected
+                                    </button>
+                                    <button class="text-sm bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                                        Add All
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- @END_COMPONENT: Main Content Area -->
+    </div>
+
+    <script>
+        // TODO: Implement business logic, API calls, or state management
+        (function() {
+            // View switching functionality
+            const navItems = document.querySelectorAll('.nav-item');
+            const viewContents = document.querySelectorAll('.view-content');
+
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active states
+                    navItems.forEach(nav => {
+                        nav.classList.remove('bg-primary', 'text-primary-foreground', 'font-medium');
+                        nav.classList.add('text-muted-foreground', 'hover:text-foreground');
+                    });
+                    
+                    // Add active state to clicked item
+                    this.classList.remove('text-muted-foreground', 'hover:text-foreground');
+                    this.classList.add('bg-primary', 'text-primary-foreground', 'font-medium');
+                    
+                    // Hide all views
+                    viewContents.forEach(view => {
+                        view.classList.add('hidden');
+                    });
+                    
+                    // Show selected view
+                    const viewName = this.getAttribute('data-view');
+                    const targetView = document.getElementById(viewName + '-view');
+                    if (targetView) {
+                        targetView.classList.remove('hidden');
+                        targetView.classList.add('content-fade-in');
+                    }
+                });
+            });
+
+            // File upload drag and drop simulation
+            const uploadArea = document.querySelector('.bg-card.border-2.border-dashed');
+            if (uploadArea) {
+                uploadArea.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('border-primary', 'bg-primary/5');
+                });
+                
+                uploadArea.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('border-primary', 'bg-primary/5');
+                });
+                
+                uploadArea.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('border-primary', 'bg-primary/5');
+                    // TODO: Handle file upload logic
+                    console.log('Files dropped:', e.dataTransfer.files);
+                });
+            }
+
+            // Search functionality placeholder
+            const searchInput = document.querySelector('input[placeholder="Search everything..."]');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    // TODO: Implement search logic
+                    console.log('Searching for:', this.value);
+                });
+            }
+
+            // Button click handlers (placeholders)
+            document.addEventListener('click', function(e) {
+                if (e.target.matches('button') || e.target.closest('button')) {
+                    const button = e.target.matches('button') ? e.target : e.target.closest('button');
+                    
+                    // Add visual feedback
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        button.style.transform = '';
+                    }, 150);
+                    
+                    // TODO: Implement specific button actions based on button content/class
+                    console.log('Button clicked:', button.textContent.trim());
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

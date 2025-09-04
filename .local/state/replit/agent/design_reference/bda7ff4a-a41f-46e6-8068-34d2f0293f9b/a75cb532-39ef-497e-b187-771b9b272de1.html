@@ -1,0 +1,575 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Chronicle - D&D Digital DM Notebook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                },
+                fontFamily: {
+                    sans: ["Inter", "sans-serif"],
+                }
+            },
+        }
+    };
+    </script>
+    <style>
+        :root {
+            --background: hsl(0 0% 100%);
+            --foreground: hsl(222.2 84% 4.9%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(222.2 84% 4.9%);
+            --popover: hsl(0 0% 100%);
+            --popover-foreground: hsl(222.2 84% 4.9%);
+            --primary: hsl(221.2 83.2% 53.3%);
+            --primary-foreground: hsl(210 40% 98%);
+            --secondary: hsl(210 40% 96%);
+            --secondary-foreground: hsl(222.2 84% 4.9%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215.4 16.3% 46.9%);
+            --accent: hsl(210 40% 96%);
+            --accent-foreground: hsl(222.2 84% 4.9%);
+            --destructive: hsl(0 84.2% 60.2%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(214.3 31.8% 91.4%);
+            --input: hsl(214.3 31.8% 91.4%);
+            --ring: hsl(221.2 83.2% 53.3%);
+            --radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-background text-foreground font-sans">
+    <!-- @COMPONENT: AppLayout [main application layout with sidebar and content area] -->
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <!-- @COMPONENT: Sidebar [main navigation component] -->
+        <aside class="w-64 bg-card border-r border-border flex flex-col">
+            <!-- Header -->
+            <div class="p-4 border-b border-border">
+                <h1 class="text-xl font-bold text-foreground flex items-center gap-2">
+                    <i class="fas fa-dragon text-primary"></i>
+                    Campaign Chronicle
+                </h1>
+                <p class="text-sm text-muted-foreground mt-1">Digital DM Notebook</p>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="flex-1 p-4">
+                <div class="space-y-2">
+                    <button data-event="click:navigateToTimeline" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-md">
+                        <i class="fas fa-clock"></i>
+                        Timeline
+                    </button>
+                    <button data-event="click:navigateToCharacters" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+                        <i class="fas fa-users"></i>
+                        Characters & NPCs
+                    </button>
+                    <button data-event="click:navigateToPlots" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+                        <i class="fas fa-scroll"></i>
+                        Plot Summary
+                    </button>
+                    <button data-event="click:navigateToLore" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+                        <i class="fas fa-globe"></i>
+                        World Lore
+                    </button>
+                </div>
+
+                <div class="mt-8">
+                    <h3 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Tools</h3>
+                    <div class="space-y-2">
+                        <button data-event="click:openUploadModal" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+                            <i class="fas fa-upload"></i>
+                            Import Documents
+                        </button>
+                        <button data-event="click:openSearch" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+                            <i class="fas fa-search"></i>
+                            Search All Content
+                        </button>
+                        <button data-event="click:generateSummary" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+                            <i class="fas fa-magic"></i>
+                            AI Insights
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Campaign Info -->
+            <div class="p-4 border-t border-border">
+                <div class="bg-muted rounded-lg p-3">
+                    <h4 class="font-medium text-sm" data-bind="campaign.name">The Lost Crown</h4>
+                    <p class="text-xs text-muted-foreground mt-1">Session 12 • Level 8 Party</p>
+                    <p class="text-xs text-muted-foreground" data-bind="campaign.lastPlayed">Last played: Nov 15, 2024</p>
+                </div>
+            </div>
+        </aside>
+        <!-- @END_COMPONENT: Sidebar -->
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Bar -->
+            <!-- @COMPONENT: TopBar [header with actions and search] -->
+            <header class="bg-card border-b border-border px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-foreground">Campaign Timeline</h2>
+                        <p class="text-sm text-muted-foreground">Chronological events and story progression</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button data-event="click:addTimelineEvent" class="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors">
+                            <i class="fas fa-plus"></i>
+                            Add Event
+                        </button>
+                        <button class="bg-secondary hover:bg-secondary/80 text-secondary-foreground px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors">
+                            <i class="fas fa-filter"></i>
+                            Filter
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <!-- @END_COMPONENT: TopBar -->
+
+            <!-- Timeline Content -->
+            <!-- @COMPONENT: TimelineView [main timeline display] -->
+            <div class="flex-1 overflow-auto">
+                <div class="p-6">
+                    <!-- Quick Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-card border border-border rounded-lg p-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold" data-bind="stats.totalEvents">47</p>
+                                    <p class="text-sm text-muted-foreground">Total Events</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-card border border-border rounded-lg p-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-accent/10 text-accent rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold" data-bind="stats.totalCharacters">23</p>
+                                    <p class="text-sm text-muted-foreground">Characters</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-card border border-border rounded-lg p-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-secondary/10 text-secondary-foreground rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-scroll"></i>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold" data-bind="stats.activePlots">8</p>
+                                    <p class="text-sm text-muted-foreground">Active Plots</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-card border border-border rounded-lg p-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-muted/10 text-muted-foreground rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold" data-bind="stats.sessionHours">72</p>
+                                    <p class="text-sm text-muted-foreground">Session Hours</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Events -->
+                    <div class="space-y-4">
+                        <!-- @MAP: timelineEvents.map(event => ( -->
+                        <!-- Recent Event -->
+                        <div class="bg-card border border-border rounded-lg p-6 hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-sword"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-foreground" data-bind="event.title">The Battle of Thornwick Pass</h3>
+                                        <div class="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                                            <span data-bind="event.gameDate">15th of Leaffall, Year 1487</span>
+                                            <span>•</span>
+                                            <span data-bind="event.realDate">Session 12 - Nov 15, 2024</span>
+                                            <span>•</span>
+                                            <span class="bg-destructive/10 text-destructive px-2 py-0.5 rounded-full text-xs">Combat</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="text-muted-foreground hover:text-foreground transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                            <p class="text-muted-foreground mb-4" data-bind="event.description">The party encountered a group of hill giants blocking the mountain pass. After a fierce battle, they discovered the giants were being controlled by a mysterious dark crystal. Kael took significant damage but Lyra's healing kept everyone alive.</p>
+                            
+                            <!-- Linked Characters -->
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs bg-accent/10 text-accent-foreground px-2 py-1 rounded-full">
+                                    <i class="fas fa-user text-accent mr-1"></i>
+                                    <a href="#" class="hover:underline" data-bind="character.name">Kael Ironforge</a>
+                                </span>
+                                <span class="text-xs bg-accent/10 text-accent-foreground px-2 py-1 rounded-full">
+                                    <i class="fas fa-user text-accent mr-1"></i>
+                                    <a href="#" class="hover:underline" data-bind="character.name">Lyra Moonwhisper</a>
+                                </span>
+                                <span class="text-xs bg-secondary/10 text-secondary-foreground px-2 py-1 rounded-full">
+                                    <i class="fas fa-scroll text-secondary mr-1"></i>
+                                    <a href="#" class="hover:underline" data-bind="plot.name">The Crystal Corruption</a>
+                                </span>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex items-center gap-2">
+                                <button data-event="click:editEvent" class="text-xs bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md transition-colors">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Edit
+                                </button>
+                                <button data-event="click:linkEvent" class="text-xs bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md transition-colors">
+                                    <i class="fas fa-link mr-1"></i>
+                                    Add Links
+                                </button>
+                                <button data-event="click:addNote" class="text-xs bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md transition-colors">
+                                    <i class="fas fa-sticky-note mr-1"></i>
+                                    Add Note
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Earlier Event -->
+                        <div class="bg-card border border-border rounded-lg p-6 hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 bg-accent/10 text-accent rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-comments"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-foreground" data-bind="event.title">Meeting with Lord Harwick</h3>
+                                        <div class="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                                            <span data-bind="event.gameDate">12th of Leaffall, Year 1487</span>
+                                            <span>•</span>
+                                            <span data-bind="event.realDate">Session 11 - Nov 8, 2024</span>
+                                            <span>•</span>
+                                            <span class="bg-accent/10 text-accent px-2 py-0.5 rounded-full text-xs">Roleplay</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="text-muted-foreground hover:text-foreground transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                            <p class="text-muted-foreground mb-4" data-bind="event.description">The party was summoned to meet with Lord Harwick at his manor. He revealed that strange creatures have been attacking caravans near Thornwick Pass and offered a substantial reward for clearing the route. Zara successfully negotiated for better terms.</p>
+                            
+                            <!-- Linked Content -->
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs bg-accent/10 text-accent-foreground px-2 py-1 rounded-full">
+                                    <i class="fas fa-user text-accent mr-1"></i>
+                                    <a href="#" class="hover:underline" data-bind="character.name">Lord Harwick</a>
+                                </span>
+                                <span class="text-xs bg-accent/10 text-accent-foreground px-2 py-1 rounded-full">
+                                    <i class="fas fa-user text-accent mr-1"></i>
+                                    <a href="#" class="hover:underline" data-bind="character.name">Zara Shadowstep</a>
+                                </span>
+                                <span class="text-xs bg-muted/10 text-muted-foreground px-2 py-1 rounded-full">
+                                    <i class="fas fa-map-marker-alt text-muted-foreground mr-1"></i>
+                                    <a href="#" class="hover:underline" data-bind="location.name">Harwick Manor</a>
+                                </span>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button data-event="click:editEvent" class="text-xs bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md transition-colors">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Edit
+                                </button>
+                                <button data-event="click:linkEvent" class="text-xs bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md transition-colors">
+                                    <i class="fas fa-link mr-1"></i>
+                                    Add Links
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Discovery Event -->
+                        <div class="bg-card border border-border rounded-lg p-6 hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 bg-secondary/10 text-secondary-foreground rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-foreground" data-bind="event.title">Discovery of the Ancient Runes</h3>
+                                        <div class="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                                            <span data-bind="event.gameDate">8th of Leaffall, Year 1487</span>
+                                            <span>•</span>
+                                            <span data-bind="event.realDate">Session 10 - Nov 1, 2024</span>
+                                            <span>•</span>
+                                            <span class="bg-secondary/10 text-secondary-foreground px-2 py-0.5 rounded-full text-xs">Discovery</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="text-muted-foreground hover:text-foreground transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                            <p class="text-muted-foreground mb-4" data-bind="event.description">While exploring the abandoned temple, Eldara deciphered ancient draconic runes that spoke of a "Crown of Storms" hidden beneath the mountains. The runes seemed to react to her touch, glowing with a faint blue light.</p>
+                            
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs bg-accent/10 text-accent-foreground px-2 py-1 rounded-full">
+                                    <i class="fas fa-user text-accent mr-1"></i>
+                                    <a href="#" class="hover:underline" data-bind="character.name">Eldara Starweaver</a>
+                                </span>
+                                <span class="text-xs bg-secondary/10 text-secondary-foreground px-2 py-1 rounded-full">
+                                    <i class="fas fa-scroll text-secondary mr-1"></i>
+                                    <a href="#" class="hover:underline" data-bind="plot.name">The Lost Crown</a>
+                                </span>
+                                <span class="text-xs bg-muted/10 text-muted-foreground px-2 py-1 rounded-full">
+                                    <i class="fas fa-map-marker-alt text-muted-foreground mr-1"></i>
+                                    <a href="#" class="hover:underline" data-bind="location.name">Temple of Storms</a>
+                                </span>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button data-event="click:editEvent" class="text-xs bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md transition-colors">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Edit
+                                </button>
+                                <button data-event="click:linkEvent" class="text-xs bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md transition-colors">
+                                    <i class="fas fa-link mr-1"></i>
+                                    Add Links
+                                </button>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+
+                        <!-- Load More Button -->
+                        <div class="text-center py-6">
+                            <button data-event="click:loadMoreEvents" class="bg-secondary hover:bg-secondary/80 text-secondary-foreground px-6 py-3 rounded-md font-medium transition-colors">
+                                Load Earlier Events
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: TimelineView -->
+        </main>
+
+        <!-- Right Sidebar - Quick Links and AI Suggestions -->
+        <!-- @COMPONENT: RightSidebar [contextual information and AI suggestions] -->
+        <aside class="w-80 bg-card border-l border-border flex flex-col">
+            <!-- Quick Actions -->
+            <div class="p-4 border-b border-border">
+                <h3 class="font-semibold text-sm text-foreground mb-3">Quick Actions</h3>
+                <div class="space-y-2">
+                    <button data-event="click:quickAddCharacter" class="w-full text-left px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Add Character
+                    </button>
+                    <button data-event="click:quickAddPlot" class="w-full text-left px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+                        <i class="fas fa-plus-circle mr-2"></i>
+                        Add Plot Thread
+                    </button>
+                    <button data-event="click:quickAddLocation" class="w-full text-left px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+                        <i class="fas fa-map-pin mr-2"></i>
+                        Add Location
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Suggestions -->
+            <div class="p-4 border-b border-border">
+                <h3 class="font-semibold text-sm text-foreground mb-3 flex items-center gap-2">
+                    <i class="fas fa-magic text-primary"></i>
+                    AI Suggestions
+                </h3>
+                <div class="space-y-3">
+                    <div class="bg-primary/5 border border-primary/20 rounded-lg p-3">
+                        <p class="text-sm font-medium text-foreground">Potential Plot Hook</p>
+                        <p class="text-xs text-muted-foreground mt-1">The crystal from Thornwick Pass might be connected to the Crown of Storms legend. Consider linking these storylines.</p>
+                        <div class="flex gap-2 mt-2">
+                            <button data-event="click:acceptSuggestion" class="text-xs bg-primary text-primary-foreground px-2 py-1 rounded">Accept</button>
+                            <button data-event="click:dismissSuggestion" class="text-xs text-muted-foreground hover:text-foreground">Dismiss</button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-accent/5 border border-accent/20 rounded-lg p-3">
+                        <p class="text-sm font-medium text-foreground">Character Development</p>
+                        <p class="text-xs text-muted-foreground mt-1">Kael has taken damage in 3 recent battles. Consider a character moment about his resilience.</p>
+                        <div class="flex gap-2 mt-2">
+                            <button data-event="click:acceptSuggestion" class="text-xs bg-accent text-accent-foreground px-2 py-1 rounded">Accept</button>
+                            <button data-event="click:dismissSuggestion" class="text-xs text-muted-foreground hover:text-foreground">Dismiss</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Links -->
+            <div class="p-4 flex-1">
+                <h3 class="font-semibold text-sm text-foreground mb-3">Recently Referenced</h3>
+                <div class="space-y-2">
+                    <a href="#" class="block p-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-user text-accent"></i>
+                            <span data-bind="character.name">Kael Ironforge</span>
+                        </div>
+                        <p class="text-xs text-muted-foreground mt-1">Dwarf Fighter • Referenced 3 times today</p>
+                    </a>
+                    
+                    <a href="#" class="block p-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-scroll text-secondary"></i>
+                            <span data-bind="plot.name">The Crystal Corruption</span>
+                        </div>
+                        <p class="text-xs text-muted-foreground mt-1">Active subplot • 2 events linked</p>
+                    </a>
+                    
+                    <a href="#" class="block p-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-muted-foreground"></i>
+                            <span data-bind="location.name">Thornwick Pass</span>
+                        </div>
+                        <p class="text-xs text-muted-foreground mt-1">Mountain location • Combat site</p>
+                    </a>
+                </div>
+            </div>
+        </aside>
+        <!-- @END_COMPONENT: RightSidebar -->
+    </div>
+    <!-- @END_COMPONENT: AppLayout -->
+
+    <!-- Upload Modal (Hidden by default) -->
+    <!-- @COMPONENT: UploadModal [file upload interface with AI processing] -->
+    <div id="uploadModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-card rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div class="p-6 border-b border-border">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-foreground">Import Campaign Notes</h3>
+                    <button data-event="click:closeUploadModal" class="text-muted-foreground hover:text-foreground">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <!-- Upload Zone -->
+                <div class="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer">
+                    <i class="fas fa-cloud-upload-alt text-4xl text-muted-foreground mb-4"></i>
+                    <p class="text-foreground font-medium mb-1">Drop files here or click to browse</p>
+                    <p class="text-sm text-muted-foreground">Supports PDF, TXT, DOC files up to 10MB</p>
+                    <input type="file" data-implementation="Handle file upload with validation" class="hidden" accept=".pdf,.txt,.doc,.docx" multiple>
+                </div>
+
+                <!-- AI Processing Options -->
+                <div class="mt-6">
+                    <h4 class="font-medium text-foreground mb-3">AI Analysis Options</h4>
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" checked class="rounded border-border text-primary focus:ring-primary">
+                            <span class="text-sm text-foreground">Extract character names and details</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" checked class="rounded border-border text-primary focus:ring-primary">
+                            <span class="text-sm text-foreground">Identify timeline events</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" checked class="rounded border-border text-primary focus:ring-primary">
+                            <span class="text-sm text-foreground">Detect plot threads and hooks</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" class="rounded border-border text-primary focus:ring-primary">
+                            <span class="text-sm text-foreground">Extract world lore and locations</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end gap-3 mt-6">
+                    <button data-event="click:closeUploadModal" class="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                        Cancel
+                    </button>
+                    <button data-event="click:processFiles" data-implementation="Process uploaded files with OpenAI API" class="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                        Process Files
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: UploadModal -->
+
+    <script>
+        (function() {
+            // TODO: Implement business logic, API calls, or state management
+            
+            // Simple modal controls for demonstration
+            const uploadModal = document.getElementById('uploadModal');
+            const openUploadButtons = document.querySelectorAll('[data-event*="openUploadModal"]');
+            const closeUploadButtons = document.querySelectorAll('[data-event*="closeUploadModal"]');
+            
+            openUploadButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    uploadModal.classList.remove('hidden');
+                });
+            });
+            
+            closeUploadButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    uploadModal.classList.add('hidden');
+                });
+            });
+            
+            // Close modal on background click
+            uploadModal.addEventListener('click', (e) => {
+                if (e.target === uploadModal) {
+                    uploadModal.classList.add('hidden');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
