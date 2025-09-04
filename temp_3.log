@@ -1,0 +1,395 @@
+client:495 [vite] connecting...
+client:618 [vite] connected.
+chunk-WERSD76P.js?v=5d52c1fd:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+chunk-HQR255WD.js?v=5d52c1fd:336 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-HQR255WD.js?v=5d52c1fd:336
+commitHookEffectListMount @ chunk-WERSD76P.js?v=5d52c1fd:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=5d52c1fd:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=5d52c1fd:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=5d52c1fd:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=5d52c1fd:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=5d52c1fd:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=5d52c1fd:19447
+commitRootImpl @ chunk-WERSD76P.js?v=5d52c1fd:19416
+commitRoot @ chunk-WERSD76P.js?v=5d52c1fd:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5d52c1fd:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5d52c1fd:9119
+(anonymous) @ chunk-WERSD76P.js?v=5d52c1fd:18627
+chunk-HQR255WD.js?v=5d52c1fd:336 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-HQR255WD.js?v=5d52c1fd:336
+commitHookEffectListMount @ chunk-WERSD76P.js?v=5d52c1fd:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=5d52c1fd:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=5d52c1fd:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=5d52c1fd:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=5d52c1fd:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=5d52c1fd:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=5d52c1fd:19447
+commitRootImpl @ chunk-WERSD76P.js?v=5d52c1fd:19416
+commitRoot @ chunk-WERSD76P.js?v=5d52c1fd:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5d52c1fd:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5d52c1fd:9119
+(anonymous) @ chunk-WERSD76P.js?v=5d52c1fd:18627
+chunk-3TFVT2CW.js?v=5d52c1fd:760 Uncaught Error: React.Children.only expected to receive a single React element child.
+    at Object.onlyChild [as only] (chunk-3TFVT2CW.js?v=5d52c1fd:760:19)
+    at chunk-6LRRM7M2.js?v=5d52c1fd:88:66
+    at renderWithHooks (chunk-WERSD76P.js?v=5d52c1fd:11548:26)
+    at updateForwardRef (chunk-WERSD76P.js?v=5d52c1fd:14325:28)
+    at beginWork (chunk-WERSD76P.js?v=5d52c1fd:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=5d52c1fd:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=5d52c1fd:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=5d52c1fd:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=5d52c1fd:19765:15)
+    at performUnitOfWork (chunk-WERSD76P.js?v=5d52c1fd:19198:20)
+onlyChild @ chunk-3TFVT2CW.js?v=5d52c1fd:760
+(anonymous) @ chunk-6LRRM7M2.js?v=5d52c1fd:88
+renderWithHooks @ chunk-WERSD76P.js?v=5d52c1fd:11548
+updateForwardRef @ chunk-WERSD76P.js?v=5d52c1fd:14325
+beginWork @ chunk-WERSD76P.js?v=5d52c1fd:15946
+callCallback2 @ chunk-WERSD76P.js?v=5d52c1fd:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=5d52c1fd:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=5d52c1fd:3733
+beginWork$1 @ chunk-WERSD76P.js?v=5d52c1fd:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=5d52c1fd:19198
+workLoopSync @ chunk-WERSD76P.js?v=5d52c1fd:19137
+renderRootSync @ chunk-WERSD76P.js?v=5d52c1fd:19116
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5d52c1fd:18874
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5d52c1fd:9119
+(anonymous) @ chunk-WERSD76P.js?v=5d52c1fd:18627
+chunk-3TFVT2CW.js?v=5d52c1fd:760 Uncaught Error: React.Children.only expected to receive a single React element child.
+    at Object.onlyChild [as only] (chunk-3TFVT2CW.js?v=5d52c1fd:760:19)
+    at chunk-6LRRM7M2.js?v=5d52c1fd:88:66
+    at renderWithHooks (chunk-WERSD76P.js?v=5d52c1fd:11548:26)
+    at updateForwardRef (chunk-WERSD76P.js?v=5d52c1fd:14325:28)
+    at beginWork (chunk-WERSD76P.js?v=5d52c1fd:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=5d52c1fd:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=5d52c1fd:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=5d52c1fd:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=5d52c1fd:19765:15)
+    at performUnitOfWork (chunk-WERSD76P.js?v=5d52c1fd:19198:20)
+onlyChild @ chunk-3TFVT2CW.js?v=5d52c1fd:760
+(anonymous) @ chunk-6LRRM7M2.js?v=5d52c1fd:88
+renderWithHooks @ chunk-WERSD76P.js?v=5d52c1fd:11548
+updateForwardRef @ chunk-WERSD76P.js?v=5d52c1fd:14325
+beginWork @ chunk-WERSD76P.js?v=5d52c1fd:15946
+callCallback2 @ chunk-WERSD76P.js?v=5d52c1fd:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=5d52c1fd:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=5d52c1fd:3733
+beginWork$1 @ chunk-WERSD76P.js?v=5d52c1fd:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=5d52c1fd:19198
+workLoopSync @ chunk-WERSD76P.js?v=5d52c1fd:19137
+renderRootSync @ chunk-WERSD76P.js?v=5d52c1fd:19116
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5d52c1fd:18874
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5d52c1fd:9119
+(anonymous) @ chunk-WERSD76P.js?v=5d52c1fd:18627
+chunk-3TFVT2CW.js?v=5d52c1fd:760 Uncaught Error: React.Children.only expected to receive a single React element child.
+    at Object.onlyChild [as only] (chunk-3TFVT2CW.js?v=5d52c1fd:760:19)
+    at chunk-6LRRM7M2.js?v=5d52c1fd:88:66
+    at renderWithHooks (chunk-WERSD76P.js?v=5d52c1fd:11548:26)
+    at updateForwardRef (chunk-WERSD76P.js?v=5d52c1fd:14325:28)
+    at beginWork (chunk-WERSD76P.js?v=5d52c1fd:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=5d52c1fd:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=5d52c1fd:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=5d52c1fd:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=5d52c1fd:19765:15)
+    at performUnitOfWork (chunk-WERSD76P.js?v=5d52c1fd:19198:20)
+onlyChild @ chunk-3TFVT2CW.js?v=5d52c1fd:760
+(anonymous) @ chunk-6LRRM7M2.js?v=5d52c1fd:88
+renderWithHooks @ chunk-WERSD76P.js?v=5d52c1fd:11548
+updateForwardRef @ chunk-WERSD76P.js?v=5d52c1fd:14325
+beginWork @ chunk-WERSD76P.js?v=5d52c1fd:15946
+callCallback2 @ chunk-WERSD76P.js?v=5d52c1fd:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=5d52c1fd:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=5d52c1fd:3733
+beginWork$1 @ chunk-WERSD76P.js?v=5d52c1fd:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=5d52c1fd:19198
+workLoopSync @ chunk-WERSD76P.js?v=5d52c1fd:19137
+renderRootSync @ chunk-WERSD76P.js?v=5d52c1fd:19116
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5d52c1fd:18874
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5d52c1fd:9119
+(anonymous) @ chunk-WERSD76P.js?v=5d52c1fd:18627
+chunk-3TFVT2CW.js?v=5d52c1fd:760 Uncaught Error: React.Children.only expected to receive a single React element child.
+    at Object.onlyChild [as only] (chunk-3TFVT2CW.js?v=5d52c1fd:760:19)
+    at chunk-6LRRM7M2.js?v=5d52c1fd:88:66
+    at renderWithHooks (chunk-WERSD76P.js?v=5d52c1fd:11548:26)
+    at updateForwardRef (chunk-WERSD76P.js?v=5d52c1fd:14325:28)
+    at beginWork (chunk-WERSD76P.js?v=5d52c1fd:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=5d52c1fd:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=5d52c1fd:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=5d52c1fd:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=5d52c1fd:19765:15)
+    at performUnitOfWork (chunk-WERSD76P.js?v=5d52c1fd:19198:20)
+onlyChild @ chunk-3TFVT2CW.js?v=5d52c1fd:760
+(anonymous) @ chunk-6LRRM7M2.js?v=5d52c1fd:88
+renderWithHooks @ chunk-WERSD76P.js?v=5d52c1fd:11548
+updateForwardRef @ chunk-WERSD76P.js?v=5d52c1fd:14325
+beginWork @ chunk-WERSD76P.js?v=5d52c1fd:15946
+callCallback2 @ chunk-WERSD76P.js?v=5d52c1fd:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=5d52c1fd:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=5d52c1fd:3733
+beginWork$1 @ chunk-WERSD76P.js?v=5d52c1fd:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=5d52c1fd:19198
+workLoopSync @ chunk-WERSD76P.js?v=5d52c1fd:19137
+renderRootSync @ chunk-WERSD76P.js?v=5d52c1fd:19116
+recoverFromConcurrentError @ chunk-WERSD76P.js?v=5d52c1fd:18736
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5d52c1fd:18879
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5d52c1fd:9119
+(anonymous) @ chunk-WERSD76P.js?v=5d52c1fd:18627
+chunk-3TFVT2CW.js?v=5d52c1fd:760 Uncaught Error: React.Children.only expected to receive a single React element child.
+    at Object.onlyChild [as only] (chunk-3TFVT2CW.js?v=5d52c1fd:760:19)
+    at chunk-6LRRM7M2.js?v=5d52c1fd:88:66
+    at renderWithHooks (chunk-WERSD76P.js?v=5d52c1fd:11548:26)
+    at updateForwardRef (chunk-WERSD76P.js?v=5d52c1fd:14325:28)
+    at beginWork (chunk-WERSD76P.js?v=5d52c1fd:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=5d52c1fd:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=5d52c1fd:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=5d52c1fd:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=5d52c1fd:19765:15)
+    at performUnitOfWork (chunk-WERSD76P.js?v=5d52c1fd:19198:20)
+onlyChild @ chunk-3TFVT2CW.js?v=5d52c1fd:760
+(anonymous) @ chunk-6LRRM7M2.js?v=5d52c1fd:88
+renderWithHooks @ chunk-WERSD76P.js?v=5d52c1fd:11548
+updateForwardRef @ chunk-WERSD76P.js?v=5d52c1fd:14325
+beginWork @ chunk-WERSD76P.js?v=5d52c1fd:15946
+callCallback2 @ chunk-WERSD76P.js?v=5d52c1fd:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=5d52c1fd:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=5d52c1fd:3733
+beginWork$1 @ chunk-WERSD76P.js?v=5d52c1fd:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=5d52c1fd:19198
+workLoopSync @ chunk-WERSD76P.js?v=5d52c1fd:19137
+renderRootSync @ chunk-WERSD76P.js?v=5d52c1fd:19116
+recoverFromConcurrentError @ chunk-WERSD76P.js?v=5d52c1fd:18736
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5d52c1fd:18879
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5d52c1fd:9119
+(anonymous) @ chunk-WERSD76P.js?v=5d52c1fd:18627
+chunk-3TFVT2CW.js?v=5d52c1fd:760 Uncaught Error: React.Children.only expected to receive a single React element child.
+    at Object.onlyChild [as only] (chunk-3TFVT2CW.js?v=5d52c1fd:760:19)
+    at chunk-6LRRM7M2.js?v=5d52c1fd:88:66
+    at renderWithHooks (chunk-WERSD76P.js?v=5d52c1fd:11548:26)
+    at updateForwardRef (chunk-WERSD76P.js?v=5d52c1fd:14325:28)
+    at beginWork (chunk-WERSD76P.js?v=5d52c1fd:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=5d52c1fd:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=5d52c1fd:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=5d52c1fd:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=5d52c1fd:19765:15)
+    at performUnitOfWork (chunk-WERSD76P.js?v=5d52c1fd:19198:20)
+onlyChild @ chunk-3TFVT2CW.js?v=5d52c1fd:760
+(anonymous) @ chunk-6LRRM7M2.js?v=5d52c1fd:88
+renderWithHooks @ chunk-WERSD76P.js?v=5d52c1fd:11548
+updateForwardRef @ chunk-WERSD76P.js?v=5d52c1fd:14325
+beginWork @ chunk-WERSD76P.js?v=5d52c1fd:15946
+callCallback2 @ chunk-WERSD76P.js?v=5d52c1fd:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=5d52c1fd:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=5d52c1fd:3733
+beginWork$1 @ chunk-WERSD76P.js?v=5d52c1fd:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=5d52c1fd:19198
+workLoopSync @ chunk-WERSD76P.js?v=5d52c1fd:19137
+renderRootSync @ chunk-WERSD76P.js?v=5d52c1fd:19116
+recoverFromConcurrentError @ chunk-WERSD76P.js?v=5d52c1fd:18736
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5d52c1fd:18879
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5d52c1fd:9119
+(anonymous) @ chunk-WERSD76P.js?v=5d52c1fd:18627
+chunk-WERSD76P.js?v=5d52c1fd:14032 The above error occurred in the <Slot.SlotClone> component:
+
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:79:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:56:13
+    at http://localhost:5000/src/components/ui/form.tsx:122:9
+    at div
+    at http://localhost:5000/src/components/ui/form.tsx:72:6
+    at Controller (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-E45LNNVT.js?v=5d52c1fd:345:35)
+    at FormField (http://localhost:5000/src/components/ui/form.tsx:33:6)
+    at form
+    at FormProvider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-E45LNNVT.js?v=5d52c1fd:101:11)
+    at div
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-VK2OJPQA.js?v=5d52c1fd:43:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-GTDBGDAK.js?v=5d52c1fd:71:7
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:79:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:56:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-VK2OJPQA.js?v=5d52c1fd:43:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-GRB5GHN7.js?v=5d52c1fd:29:5
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:232:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:190:58
+    at Presence (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-FLJUB4ST.js?v=5d52c1fd:24:11)
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:146:64
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:79:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:56:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-VK2OJPQA.js?v=5d52c1fd:43:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-GTDBGDAK.js?v=5d52c1fd:270:22
+    at Presence (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-FLJUB4ST.js?v=5d52c1fd:24:11)
+    at Provider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-2LM3DQXS.js?v=5d52c1fd:38:15)
+    at DialogPortal (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:108:11)
+    at _c3 (http://localhost:5000/src/components/ui/dialog.tsx:50:12)
+    at Provider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-2LM3DQXS.js?v=5d52c1fd:38:15)
+    at Dialog (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:48:5)
+    at AddTimelineEventForm (http://localhost:5000/src/components/timeline/add-timeline-event-form.tsx:52:48)
+    at div
+    at Timeline (http://localhost:5000/src/pages/timeline.tsx:128:21)
+    at Route (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/wouter.js?v=5d52c1fd:280:16)
+    at Switch (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/wouter.js?v=5d52c1fd:336:17)
+    at Router
+    at main
+    at div
+    at Provider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-2LM3DQXS.js?v=5d52c1fd:38:15)
+    at TooltipProvider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=5d52c1fd:59:5)
+    at QueryClientProvider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/@tanstack_react-query.js?v=5d52c1fd:2945:3)
+    at App (http://localhost:5000/src/App.tsx?v=l_Z3JlRzyBoM6deNar_fa:79:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-WERSD76P.js?v=5d52c1fd:14032
+update.callback @ chunk-WERSD76P.js?v=5d52c1fd:14052
+callCallback @ chunk-WERSD76P.js?v=5d52c1fd:11248
+commitUpdateQueue @ chunk-WERSD76P.js?v=5d52c1fd:11265
+commitLayoutEffectOnFiber @ chunk-WERSD76P.js?v=5d52c1fd:17093
+commitLayoutMountEffects_complete @ chunk-WERSD76P.js?v=5d52c1fd:17980
+commitLayoutEffects_begin @ chunk-WERSD76P.js?v=5d52c1fd:17969
+commitLayoutEffects @ chunk-WERSD76P.js?v=5d52c1fd:17920
+commitRootImpl @ chunk-WERSD76P.js?v=5d52c1fd:19353
+commitRoot @ chunk-WERSD76P.js?v=5d52c1fd:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5d52c1fd:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5d52c1fd:9119
+(anonymous) @ chunk-WERSD76P.js?v=5d52c1fd:18627
+chunk-WERSD76P.js?v=5d52c1fd:14032 The above error occurred in the <Slot.SlotClone> component:
+
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:79:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:56:13
+    at http://localhost:5000/src/components/ui/form.tsx:122:9
+    at div
+    at http://localhost:5000/src/components/ui/form.tsx:72:6
+    at Controller (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-E45LNNVT.js?v=5d52c1fd:345:35)
+    at FormField (http://localhost:5000/src/components/ui/form.tsx:33:6)
+    at form
+    at FormProvider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-E45LNNVT.js?v=5d52c1fd:101:11)
+    at div
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-VK2OJPQA.js?v=5d52c1fd:43:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-GTDBGDAK.js?v=5d52c1fd:71:7
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:79:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:56:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-VK2OJPQA.js?v=5d52c1fd:43:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-GRB5GHN7.js?v=5d52c1fd:29:5
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:232:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:190:58
+    at Presence (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-FLJUB4ST.js?v=5d52c1fd:24:11)
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:146:64
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:79:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:56:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-VK2OJPQA.js?v=5d52c1fd:43:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-GTDBGDAK.js?v=5d52c1fd:270:22
+    at Presence (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-FLJUB4ST.js?v=5d52c1fd:24:11)
+    at Provider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-2LM3DQXS.js?v=5d52c1fd:38:15)
+    at DialogPortal (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:108:11)
+    at _c3 (http://localhost:5000/src/components/ui/dialog.tsx:50:12)
+    at Provider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-2LM3DQXS.js?v=5d52c1fd:38:15)
+    at Dialog (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:48:5)
+    at AddTimelineEventForm (http://localhost:5000/src/components/timeline/add-timeline-event-form.tsx:52:48)
+    at div
+    at Timeline (http://localhost:5000/src/pages/timeline.tsx:128:21)
+    at Route (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/wouter.js?v=5d52c1fd:280:16)
+    at Switch (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/wouter.js?v=5d52c1fd:336:17)
+    at Router
+    at main
+    at div
+    at Provider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-2LM3DQXS.js?v=5d52c1fd:38:15)
+    at TooltipProvider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=5d52c1fd:59:5)
+    at QueryClientProvider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/@tanstack_react-query.js?v=5d52c1fd:2945:3)
+    at App (http://localhost:5000/src/App.tsx?v=l_Z3JlRzyBoM6deNar_fa:79:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-WERSD76P.js?v=5d52c1fd:14032
+update.callback @ chunk-WERSD76P.js?v=5d52c1fd:14052
+callCallback @ chunk-WERSD76P.js?v=5d52c1fd:11248
+commitUpdateQueue @ chunk-WERSD76P.js?v=5d52c1fd:11265
+commitLayoutEffectOnFiber @ chunk-WERSD76P.js?v=5d52c1fd:17093
+commitLayoutMountEffects_complete @ chunk-WERSD76P.js?v=5d52c1fd:17980
+commitLayoutEffects_begin @ chunk-WERSD76P.js?v=5d52c1fd:17969
+commitLayoutEffects @ chunk-WERSD76P.js?v=5d52c1fd:17920
+commitRootImpl @ chunk-WERSD76P.js?v=5d52c1fd:19353
+commitRoot @ chunk-WERSD76P.js?v=5d52c1fd:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5d52c1fd:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5d52c1fd:9119
+(anonymous) @ chunk-WERSD76P.js?v=5d52c1fd:18627
+chunk-WERSD76P.js?v=5d52c1fd:14032 The above error occurred in the <Slot.SlotClone> component:
+
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:79:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:56:13
+    at http://localhost:5000/src/components/ui/form.tsx:122:9
+    at div
+    at http://localhost:5000/src/components/ui/form.tsx:72:6
+    at Controller (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-E45LNNVT.js?v=5d52c1fd:345:35)
+    at FormField (http://localhost:5000/src/components/ui/form.tsx:33:6)
+    at div
+    at form
+    at FormProvider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-E45LNNVT.js?v=5d52c1fd:101:11)
+    at div
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-VK2OJPQA.js?v=5d52c1fd:43:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-GTDBGDAK.js?v=5d52c1fd:71:7
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:79:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:56:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-VK2OJPQA.js?v=5d52c1fd:43:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-GRB5GHN7.js?v=5d52c1fd:29:5
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:232:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:190:58
+    at Presence (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-FLJUB4ST.js?v=5d52c1fd:24:11)
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:146:64
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:79:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-6LRRM7M2.js?v=5d52c1fd:56:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-VK2OJPQA.js?v=5d52c1fd:43:13
+    at http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-GTDBGDAK.js?v=5d52c1fd:270:22
+    at Presence (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-FLJUB4ST.js?v=5d52c1fd:24:11)
+    at Provider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-2LM3DQXS.js?v=5d52c1fd:38:15)
+    at DialogPortal (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:108:11)
+    at _c3 (http://localhost:5000/src/components/ui/dialog.tsx:50:12)
+    at Provider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-2LM3DQXS.js?v=5d52c1fd:38:15)
+    at Dialog (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-HQR255WD.js?v=5d52c1fd:48:5)
+    at AddTimelineEventForm (http://localhost:5000/src/components/timeline/add-timeline-event-form.tsx:52:48)
+    at div
+    at Timeline (http://localhost:5000/src/pages/timeline.tsx:128:21)
+    at Route (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/wouter.js?v=5d52c1fd:280:16)
+    at Switch (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/wouter.js?v=5d52c1fd:336:17)
+    at Router
+    at main
+    at div
+    at Provider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/chunk-2LM3DQXS.js?v=5d52c1fd:38:15)
+    at TooltipProvider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=5d52c1fd:59:5)
+    at QueryClientProvider (http://localhost:5000/@fs/C:/Users/sklau/Documents/DungeonScribe/node_modules/.vite/deps/@tanstack_react-query.js?v=5d52c1fd:2945:3)
+    at App (http://localhost:5000/src/App.tsx?v=l_Z3JlRzyBoM6deNar_fa:79:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-WERSD76P.js?v=5d52c1fd:14032
+update.callback @ chunk-WERSD76P.js?v=5d52c1fd:14052
+callCallback @ chunk-WERSD76P.js?v=5d52c1fd:11248
+commitUpdateQueue @ chunk-WERSD76P.js?v=5d52c1fd:11265
+commitLayoutEffectOnFiber @ chunk-WERSD76P.js?v=5d52c1fd:17093
+commitLayoutMountEffects_complete @ chunk-WERSD76P.js?v=5d52c1fd:17980
+commitLayoutEffects_begin @ chunk-WERSD76P.js?v=5d52c1fd:17969
+commitLayoutEffects @ chunk-WERSD76P.js?v=5d52c1fd:17920
+commitRootImpl @ chunk-WERSD76P.js?v=5d52c1fd:19353
+commitRoot @ chunk-WERSD76P.js?v=5d52c1fd:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5d52c1fd:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5d52c1fd:9119
+(anonymous) @ chunk-WERSD76P.js?v=5d52c1fd:18627
+chunk-WERSD76P.js?v=5d52c1fd:9129 Uncaught Error: React.Children.only expected to receive a single React element child.
+    at Object.onlyChild [as only] (chunk-3TFVT2CW.js?v=5d52c1fd:760:19)
+    at chunk-6LRRM7M2.js?v=5d52c1fd:88:66
+    at renderWithHooks (chunk-WERSD76P.js?v=5d52c1fd:11548:26)
+    at updateForwardRef (chunk-WERSD76P.js?v=5d52c1fd:14325:28)
+    at beginWork (chunk-WERSD76P.js?v=5d52c1fd:15946:22)
+    at beginWork$1 (chunk-WERSD76P.js?v=5d52c1fd:19753:22)
+    at performUnitOfWork (chunk-WERSD76P.js?v=5d52c1fd:19198:20)
+    at workLoopSync (chunk-WERSD76P.js?v=5d52c1fd:19137:13)
+    at renderRootSync (chunk-WERSD76P.js?v=5d52c1fd:19116:15)
+    at recoverFromConcurrentError (chunk-WERSD76P.js?v=5d52c1fd:18736:28)
+onlyChild @ chunk-3TFVT2CW.js?v=5d52c1fd:760
+(anonymous) @ chunk-6LRRM7M2.js?v=5d52c1fd:88
+renderWithHooks @ chunk-WERSD76P.js?v=5d52c1fd:11548
+updateForwardRef @ chunk-WERSD76P.js?v=5d52c1fd:14325
+beginWork @ chunk-WERSD76P.js?v=5d52c1fd:15946
+beginWork$1 @ chunk-WERSD76P.js?v=5d52c1fd:19753
+performUnitOfWork @ chunk-WERSD76P.js?v=5d52c1fd:19198
+workLoopSync @ chunk-WERSD76P.js?v=5d52c1fd:19137
+renderRootSync @ chunk-WERSD76P.js?v=5d52c1fd:19116
+recoverFromConcurrentError @ chunk-WERSD76P.js?v=5d52c1fd:18736
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5d52c1fd:18879
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5d52c1fd:9119
+(anonymous) @ chunk-WERSD76P.js?v=5d52c1fd:18627

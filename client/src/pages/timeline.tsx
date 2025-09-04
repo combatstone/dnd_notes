@@ -30,7 +30,9 @@ function TimelineEventCard({ event, onDelete, onEdit }: { event: TimelineEvent, 
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>This will permanently delete the event "{event.title}".</AlertDialogDescription>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the timeline event.
+              </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>

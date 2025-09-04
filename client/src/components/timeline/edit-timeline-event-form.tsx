@@ -68,7 +68,7 @@ export default function EditTimelineEventForm({ event, isOpen, onClose, onSubmit
   if (!event) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onClose} modal={false}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit {event.title}</DialogTitle>
@@ -79,7 +79,29 @@ export default function EditTimelineEventForm({ event, isOpen, onClose, onSubmit
             <FormField control={form.control} name="description" render={({ field }) => ( <FormItem> <FormLabel>Description</FormLabel> <FormControl><Textarea {...field} /></FormControl> <FormMessage /> </FormItem> )} />
             <div className="grid grid-cols-2 gap-4">
               <FormField control={form.control} name="gameDate" render={({ field }) => ( <FormItem> <FormLabel>In-Game Date</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-              <FormField control={form.control} name="eventType" render={({ field }) => ( <FormItem> <FormLabel>Event Type</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="manual">Manual</SelectItem> <SelectItem value="session_start">Session Start</SelectItem> <SelectItem value="encounter">Encounter</SelectItem> <SelectItem value="discovery">Discovery</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )} />
+              <FormField
+                control={form.control}
+                name="eventType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Event Type</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select an event type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="manual">Manual</SelectItem>
+                        <SelectItem value="session_start">Session Start</SelectItem>
+                        <SelectItem value="encounter">Encounter</SelectItem>
+                        <SelectItem value="discovery">Discovery</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <DialogFooter>
               <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>

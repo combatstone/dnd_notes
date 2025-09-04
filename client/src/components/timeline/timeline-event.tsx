@@ -66,7 +66,7 @@ export default function TimelineEvent({ event, characters, plots }: TimelineEven
                 )}
                 <span>•</span>
                 <span data-testid="event-real-date">
-                  {new Date(event.realDate).toLocaleDateString()}
+                  {event.realDate ? new Date(event.realDate).toLocaleDateString() : "No date"}
                 </span>
                 <span>•</span>
                 <Badge 
